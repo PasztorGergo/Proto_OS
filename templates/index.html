@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EnginEar | Proto_OS</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/output.css')}}" />
+    <link
+      rel="shortcut icon"
+      href="{{url_for('static', filename='assets/EnginEar_Logo.svg')}}"
+      type="image/x-icon"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  </head>
+  <body class="relative [background-image:_radial-gradient(#26558C_0%,#090A20_65%)] min-h-screen pt-16">
+    <header class="relative w-full py-4 px-24 flex items-center justify-between">
+      <div class="flex gap-8 items-center h-full">
+        <img width="64" height="64" alt="Scan logo" src="{{url_for('static', filename='assets/timer.svg')}}" class="mix-blend-normal" />
+        <h2 class="glow-text text-3xl uppercase">Bio scan</h2>
+      </div>
+      <div class="flex items-center gap-8">
+        <h2 class="uppercase glow-text text-3xl">Threat levlel</h2>
+        <div class="min-w-fit flex flex-col items-center gap-4">
+          <img class="h-12" src="{{url_for('static', filename='assets/range.svg')}}" alt="Threat-o-meter">
+          <div class="bg-primary shadow-[0_0_8px_#9CEEFC] w-full h-[1px] relative flex items-center">
+            <div class="absolute bg-primary shadow-[0_0_8px_#9CEEFC] w-4 h-4 [clip-path:polygon(50%_0%,_0%_100%,_100%_100%)]" id="triangle" />
+          </div>
+        </div>
+      </div>
+      <div class="absolute top-0 left-0 bg-primary-light w-full h-full mix-blend-soft-light" />
+    </header>
+    <main class="mt-16 px-24 w-full grid grid-cols-3 gap-x-8">
+      <nav class="">
+        <h2 class="bg-primary-light bg-opacity-25 text-2xl glow-text w-full px-4 py-2 text-opacity-80 mb-8">Scan data</h2>
+        <ul class="flex flex-col w-full">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </nav>
+      <section>
+        <h2 class="bg-primary-light bg-opacity-25 text-2xl glow-text w-full px-4 py-2 text-opacity-80 mb-8">
+          Emotions
+        </h2>
+          <ul class="glow-text flex flex-col items-center justify-between w-full h-full">
+            <li class="emotion" onclick="setEmotion(0)">Default</li>
+            <li class="emotion" onclick="setEmotion(1)">Happy</li>
+            <li class="emotion" onclick="setEmotion(2)">Tired</li>
+            <li class="emotion" onclick="setEmotion(3)">Eyes-closes</li>
+            <li class="emotion" onclick="setEmotion(4)">Angry</li>
+            <li class="emotion" onclick="setEmotion(5)">Furious</li>
+            <li class="emotion" onclick="setEmotion(6)">Confused</li>
+            <li class="emotion" onclick="setEmotion(7)">Thinking</li>
+            <li class="emotion" onclick="setEmotion(8)">Inquestitive</li>
+            <li class="emotion" onclick="setEmotion(9)">Hungary</li>
+          </ul>
+      </section>
+      <section class="flex flex-col gap-8">
+        <h2 class="bg-primary-light bg-opacity-25 text-2xl glow-text w-full px-4 py-2 text-opacity-80">
+          Functions
+        </h2>
+        <div>
+          <h3 class="px-4 py-2 md:w-2/3 bg-[#74DC6E] bg-opacity-25 text-primary-light text-opacity-80">Primary</h3>
+          <ul class="text-primary-light mt-4 flex flex-col gap-4">
+            <li>Power</li>
+            <li id="os"></li>
+          </ul>
+        </div>
+          <div>
+            <h3 class="px-4 py-2 md:w-2/3 bg-[#74DC6E] bg-opacity-25 text-primary-light text-opacity-80">Secondary</h3>
+          <ul class="text-primary-light mt-4 flex flex-col gap-4">
+            <li id="hall" class="flex items-center gap-4">
+              <button onclick="toggleHallState()" class="rounded-full aspect-square p-2" id="hall-btn"></button>
+              Hall-effect sensor
+            </li>
+            <li id="thermo">
+              Thermomemter
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  <script>
+    const triangle = document.getElementById("triangle");
+    const os = document.getElementById("os");
+    const hallState = true;
+    const hall = document.getElementById("hall");
+    const hallBtn = document.getElementById("hall-btn");
+    const emotions = document.querySelectorAll("li.emotion");
+    const emotion = 0;
+
+    //Setting default as active emotion when inicialized
+    emotions[0].classList.add("active");
+
+    /*OS-check*/
+    fetch(`/system`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if(res.ok){
+        res.json().then((x) => {
+          os.innerHTML = `Operating System (${x?.version})`;
+        })
+      }else{
+        os.innerHTML = `Couldn't load OS`;
+      }
+    })
+
+    //Hall-effect sensor
+    hallBtn.innerHTML = "ON";
+    hallBtn.classList.add("on");
+    function toggleHallState(){
+      if(hallBtn.classList.contains("on")){
+        fetch("/hall-effect", {
+          method:"UPDATE",
+          body: JSON.stringify({state: false})
+        }).then((res) => {
+          if(res.ok){
+            hallBtn.classList.replace("on", "off");
+            hallBtn.innerHTML("OFF")
+          }
+        }).catch(()=>alert("Someting went wrong"))
+      }else{
+        fetch("/hall-effect", {
+          method:"UPDATE",
+          body: JSON.stringify({state: true})
+        }).then((res) => {
+          if(res.ok){
+            hallBtn.classList.replace("off", "on");
+            hallBtn.innerHTML("ON")
+          }
+        }).catch(()=>alert("Someting went wrong"))
+      }
+    }
+
+    //Threat level indicator
+    triangle.style.left = "30%";
+
+    //Sending emotion id to be displayed
+    const setEmotion = async (id) => {
+      //Remvoing active from previous emotion
+      emotions[emotion].classList.remove("active");
+      emotion = id;
+      emotions[emotion].classList.add("active");
+
+      //Increase threat as getting more furious
+      if(id == 5){
+        triangle.style.left = "60%"
+      }else{
+        //Back to default threat
+        triangle.style.left = "30%";
+      }
+
+      const res = await fetch(`/emotion`, {
+        method: "POST",
+        body: JSON.stringify({ id }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) {
+        console.error("Something went wrong while setting the emotion");
+      }
+    };
+  </script>
+</html>
+
