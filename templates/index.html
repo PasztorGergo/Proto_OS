@@ -34,11 +34,14 @@
     <main class="mt-16 px-24 w-full grid grid-cols-3 gap-x-8">
       <nav class="">
         <h2 class="bg-primary-light bg-opacity-25 text-2xl glow-text w-full px-4 py-2 text-opacity-80 mb-8">Scan data</h2>
-        <ul class="flex flex-col w-full">
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
+        <ul class="flex flex-col w-full text-white gap-2">
+          {% if title == "controls"%}
+            <li class="pl-8 pr-4 py-2 rounded-sm border bg-yellow-500 bg-opacity-80 border-primary-lighter border-opacity-25"><a href="/">Control panel</a></li>
+            <li class="pl-8 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"><a href="/scans">HK-ReSe-024 type Protogen</a></li>
+          {% elif title == "scans" %}
+            <li class="pl-8 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"><a href="/">Control panel</a></li>
+            <li class="pl-8 pr-4 py-2 rounded-sm border bg-yellow-500 bg-opacity-80 border-primary-lighter border-opacity-25"><a href="/scans">HK-ReSe-024 type Protogen</a></li>
+          {%endif%}
         </ul>
       </nav>
       <section>
@@ -117,8 +120,11 @@
     function toggleHallState(){
       if(hallBtn.classList.contains("on")){
         fetch("/hall-effect", {
-          method:"PATCH",
-          body: JSON.stringify({state: false})
+          method:"POST",
+          body: JSON.stringify({state: -1}),
+          headers:{
+            "Content-Type":"application/json"
+          }
         }).then((res) => {
           if(res.ok){
             hallBtn.classList.replace("on", "off");
@@ -127,8 +133,11 @@
         }).catch(()=>alert("Someting went wrong"))
       }else{
         fetch("/hall-effect", {
-          method:"PATCH",
-          body: JSON.stringify({state: true})
+          method:"POST",
+          body: JSON.stringify({state: 1}),
+          headers:{
+            "Content-Type":"application/json"
+          }
         }).then((res) => {
           if(res.ok){
             hallBtn.classList.replace("off", "on");

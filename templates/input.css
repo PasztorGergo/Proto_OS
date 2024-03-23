@@ -6,6 +6,17 @@
   font-family: "Poppins", sans-serif;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-primary;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white bg-opacity-80 w-1;
+}
+
 .glow-text {
   @apply text-primary-lighter;
   text-shadow: 0 0 8px #06b6d4;
@@ -17,4 +28,20 @@
 
 .off {
   @apply text-orange-400 border-2 border-orange-400 bg-[radial-gradient(#fb923c00_25%,#fb923cFF_100%)] shadow-[0_0_8px] shadow-orange-500;
+}
+
+p#binary {
+  font-size: 1.25em;
+  color: rgba(255, 255, 255, 0.1);
+  margin: 0 auto;
+  font-family: monospace;
+  word-wrap: break-word;
+  line-height: 0.8em;
+  letter-spacing: 1px;
+  width: 110%;
+}
+
+dd {
+  @apply ml-[20%];
+  margin-top: -1.75lh;
 }

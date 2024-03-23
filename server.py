@@ -10,10 +10,13 @@ emotion = 0
 @app.route("/")
 def index():
     print("Main page opened!")
-    return render_template("index.html")
+    return render_template("index.html", title="controls")
+
+@app.route("/scans")
+def scan_data():
+    return render_template("scans.html", title="scans")
 
 @app.route("/emotion", methods=["POST"])
-
 def setEmtoion():
     id = int(request.get_json()["id"])
     emotion = id
