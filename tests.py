@@ -2,7 +2,7 @@ import time
 
 class Animation:
     mouth_sync_ena = True
-    emotions = ("Default","Happy","Tired","Eyes-closed","Angry","Furious","Confiused","Thinking","Inquestitive","Hungary", "Love")
+    emotions = ("Default","Happy","Tired","Eyes-closed","Angry","Furious","Confiused","Thinking","Inquestitive", "Love")
     emotion_id = 0
     data = []
 

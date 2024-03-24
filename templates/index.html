@@ -56,10 +56,9 @@
             <li class="emotion md:w-auto w-16" onclick="setEmotion(4)"><img src="{{url_for('static', filename='/assets/Angry.png')}}" title="Angry" alt="Angry" class="w-full h-full"></li>
             <li class="emotion md:w-auto w-16" onclick="setEmotion(5)"><img src="{{url_for('static', filename='/assets/Furious.png')}}" title="Furious" alt="Furious" class="w-full h-full"></li>
             <li class="emotion md:w-auto w-16" onclick="setEmotion(6)"><img src="{{url_for('static', filename='/assets/Confused.png')}}" title="Confused" alt="Confused" class="w-full h-full"></li>  
-            <li class="emotion md:w-auto w-16" onclick="setEmotion(7)">Thinking</li>
-            <li class="emotion md:w-auto w-16" onclick="setEmotion(8)">Inquestitive</li>
-            <li class="emotion md:w-auto w-16" onclick="setEmotion(9)">Hungary</li>
-            <li class="emotion md:w-auto w-16" onclick="setEmotion(10)">Love</li>
+            <li class="emotion md:w-auto w-16" onclick="setEmotion(7)"><img src="{{url_for('static', filename='/assets/Thinking.png')}}" title="Thinking" alt="Thinking" class="w-full h-full"></li>
+            <li class="emotion md:w-auto w-16" onclick="setEmotion(8)"><img src="{{url_for('static', filename='/assets/Inquestitive.png')}}" title="Inquestitive" alt="Inquestitive" class="w-full h-full"></li>
+            <li class="emotion md:w-auto w-16" onclick="setEmotion(9)">Love</li>
           </ul>
       </section>
       <section class="flex flex-col gap-8">
@@ -80,6 +79,10 @@
               <button onclick="toggleHallState()" class="transition-all duration-500 rounded-full p-2 h-12 aspect-square" id="hall-btn"></button>
               Hall-effect sensor
             </li>
+            <li>
+              <button onclick="togglePatroitismMode()" class="transition-all duration-500 rounded-full p-2 h-12 aspect-square" id="hungary">ON</button>
+              Patroitism mode
+            </li>
             <li id="thermo">
               Thermomemter
             </li>
@@ -94,6 +97,7 @@
     const hall = document.getElementById("hall");
     const hallBtn = document.getElementById("hall-btn");
     const emotions = document.querySelectorAll("li.emotion");
+    const hungary = document.getElementById("hungary");
     let emotion = 0;
 
     //Setting default as active emotion when inicialized
@@ -143,6 +147,39 @@
           if(res.ok){
             hallBtn.classList.replace("off", "on");
             hallBtn.innerHTML = "ON";
+          }
+        }).catch(()=>alert("Someting went wrong"))
+      }
+    }
+
+    //Patroitism mode
+    hungary.innerHTML = "OFF";
+    hungary.classList.add("huoff");
+    function togglePatroitismMode(){
+      if(hungary.classList.contains("huon")){
+        fetch("/hungary", {
+          method:"POST",
+          body: JSON.stringify({state: -1}),
+          headers:{
+            "Content-Type":"application/json"
+          }
+        }).then((res) => {
+          if(res.ok){
+            hungary.classList.replace("huon", "huoff");
+            hungary.innerHTML = "OFF";
+          }
+        }).catch(()=>alert("Someting went wrong"))
+      }else{
+        fetch("/hungary", {
+          method:"POST",
+          body: JSON.stringify({state: 1}),
+          headers:{
+            "Content-Type":"application/json"
+          }
+        }).then((res) => {
+          if(res.ok){
+            hungary.classList.replace("huoff", "huon");
+            hungary.innerHTML = "ON";
           }
         }).catch(()=>alert("Someting went wrong"))
       }
