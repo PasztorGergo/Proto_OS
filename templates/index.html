@@ -58,7 +58,7 @@
             <li class="emotion md:w-auto w-16" onclick="setEmotion(6)"><img src="{{url_for('static', filename='/assets/Confused.png')}}" title="Confused" alt="Confused" class="w-full h-full"></li>  
             <li class="emotion md:w-auto w-16" onclick="setEmotion(7)"><img src="{{url_for('static', filename='/assets/Thinking.png')}}" title="Thinking" alt="Thinking" class="w-full h-full"></li>
             <li class="emotion md:w-auto w-16" onclick="setEmotion(8)"><img src="{{url_for('static', filename='/assets/Inquestitive.png')}}" title="Inquestitive" alt="Inquestitive" class="w-full h-full"></li>
-            <li class="emotion md:w-auto w-16" onclick="setEmotion(9)">Love</li>
+            <li class="emotion md:w-auto w-16" onclick="setEmotion(9)"><img src="{{url_for('static', filename='/assets/Love.png')}}" title="Love" alt="Love" class="w-full h-full"></li>
           </ul>
       </section>
       <section class="flex flex-col gap-8">
@@ -79,7 +79,7 @@
               <button onclick="toggleHallState()" class="transition-all duration-500 rounded-full p-2 h-12 aspect-square" id="hall-btn"></button>
               Hall-effect sensor
             </li>
-            <li>
+            <li class="flex items-center gap-4">
               <button onclick="togglePatroitismMode()" class="transition-all duration-500 rounded-full p-2 h-12 aspect-square" id="hungary">ON</button>
               Patroitism mode
             </li>

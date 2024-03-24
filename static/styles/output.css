@@ -2698,9 +2698,8 @@ video {
 
 .huon {
   border-width: 2px;
-  --tw-border-opacity: 1;
-  border-color: rgb(74 222 128 / var(--tw-border-opacity));
-  background-image: radial-gradient(#47705000 25%,#FFFFFFA0 50%,#CE2939FF 100%);
+  border-color: #CE2939FF;
+  background-image: radial-gradient(#477050A0 25%,#ffffffff 100%);
   --tw-text-opacity: 1;
   color: rgb(74 222 128 / var(--tw-text-opacity));
   --tw-shadow: 0 0 8px;
