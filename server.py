@@ -10,7 +10,7 @@ emotion = 0
 hu = 0
 
 def write_change():
-    fp = open("db.txt")
+    fp = open("db.txt","w")
     fp.write(f"{emotion}\t{hs}\t{hu}")
     fp.close()
 
@@ -27,9 +27,7 @@ def scan_data():
 def setEmtoion():
     id = int(request.get_json()["id"])
     emotion = id
-    fp = open("db.txt", "w")
     write_change()
-    fp.close()
     return ("", 204)
 
 @app.route("/system", methods=["GET"])
@@ -40,18 +38,14 @@ def sendStatus():
 @app.route("/hall-effect", methods=["POST"])
 def setMouthSync():
     hs = request.get_json()["state"]
-    fp = open("db.txt", "w")
     write_change()
-    fp.close()
     print("Mouth sync toggled")
     return("", 204)
 
 @app.route("/hungary", methods=["POST"])
 def setPatroitism():
     hu = request.get_json()["state"]
-    fp = open("db.txt", "w")
     write_change()
-    fp.close()
     print("Patroitism toggled")
     return("", 204)
 
