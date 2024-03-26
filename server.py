@@ -2,9 +2,9 @@ from flask import Flask, request,render_template
 from tests import ani
 
 app = Flask(__name__)
-hs = 1
+hs = True
 emotion = 0
-hu = -1
+hu = False
 
 def write_change():
     fp = open("db.txt","w")
@@ -59,5 +59,5 @@ def setPatroitism():
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000, debug=True)
     fp = open("db.txt", "w")
-    fp.write("0\t1\t0")
+    fp.write("0\tTrue\tFalse")
     fp.close()

@@ -4,6 +4,8 @@ import numpy as np
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 import time, math, random, threading, os, sys
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
+import RPi.GPIO as GPIO
+from pilmoji import Pilmoji
 
 class IEmotion:
   eyearray = []
@@ -104,12 +106,17 @@ love = IEmotion([
       []
     ], "love")
 
+HALL_EFFECT_PIN = 19
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(HALL_EFFECT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 
 DO_AUTO_BLINKS = True
 EMOTION = 0
 BOOT_TIME = 10
 IP = sys.argv[1]
 FONTFACE = "Roboto-Regular.ttf"
+patroitism = False
 
 FRAME_WIDTH = 64
 FRAME_HEIGHT = 16
@@ -128,9 +135,9 @@ emotions = [
   eyes_closed,
   angry,
   furious,
-  confused,
-  "thinking",
   inquestitive,
+  "thinking",
+  confused,
   love
 ]
 #Functions down here
@@ -198,6 +205,10 @@ def init():
   options.hardware_mapping = 'adafruit-hat'
   matrix = RGBMatrix(options=options)
 
+def clear_up():
+  matrix.Clear()
+  GPIO.cleanup()
+
 #Manually queue a blink for now
 def start_blink():
   global blink_timer
@@ -205,6 +216,7 @@ def start_blink():
 
 #Calculate and check the current blink frames, allows for animations without a sleep command
 def do_blink_update():
+  global EMOTION
   global blink_timer
   global current_eye_state
   global update_ready
@@ -225,7 +237,9 @@ def do_blink_update():
   elif frame_counter > blink_frames*2: #Animation is done
     real_frame = 0
     if DO_AUTO_BLINKS: #If we are using auto-blinks, queue next blink
-      blink_timer = time.perf_counter() + (random.randint(50, 70)/10)
+      #For confused, and love emotions delay is lowered to create more dynamic animation
+      delay = (random.randint(50, 70)/10) if EMOTION < 8 else 0.5
+      blink_timer = time.perf_counter() + delay
   else: #Incase things get weird
     real_frame = 0
   
@@ -237,12 +251,44 @@ def do_blink_update():
 def loop():
   global update_ready
   global current_eye_state
+  global EMOTION
+  global patroitism
+  global FRAME_WIDTH
+  global FRAME_HEIGHT
+  hall_effect_en = True
+  current_mouth_state = 0
 
-  do_blink_update() #Run blink updater
-  if update_ready: #If we have a new frame to display
-    img = frames_to_img(current_eye_state, 0) #Generate image from states
-    matrix.SetImage(img) #Show em
-    update_ready = False #Mark that we have finished with this update
+  time.sleep(0.05)
+  try:
+    fp = open("db.txt")
+    splited = fp.readline().split("\t")
+    EMOTION = int(splited[0])
+    hall_effect_en = bool(splited[1])
+    patroitism = bool(splited[2])
+  except IOError:
+    clear_up()
+    exit()
+
+  if EMOTION != 6:
+    if GPIO.input(hall_effect_pin) == GPIO.LOW and hall_effect_en:
+      current_mouth_state = 1
+    else:
+      current_mouth_state = 0
+
+    do_blink_update() #Run blink updater
+    if update_ready: #If we have a new frame to display
+      img = frames_to_img(current_eye_state, current_mouth_state) #Generate image from states
+      matrix.SetImage(img) #Show em
+      update_ready = False #Mark that we have finished with this update
+  else:
+    fnt = ImageFont(FONTFACE, 24)
+    txt = Image.new("RGB", (FRAME_WIDTH*2, FRAME_HEIGHT*2))
+    with Pilmoji(txt) as pilmoji:
+      pilmoji.text((0,0), "🤔", (0,0,0), fnt)
+      pilmoji.text((FRAME_WIDTH,0), "🤔", (0,0,0), fnt)
+    img_out = Image.new('RGB', (txt.width*2, txt.height))
+    img_out.paste(txt)
+    matrix.SetImage(img_out)
 
 def Paste_text_frame(txt, img_out, pos1, pos2):
   img_out.paste(txt, pos1)
@@ -329,3 +375,4 @@ if __name__ == "__main__"():
   Boot()
   while True:
     loop()
+  clear_up()
