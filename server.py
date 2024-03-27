@@ -7,6 +7,10 @@ emotion = 0
 hu = False
 
 def write_change():
+    global emotion
+    global hs
+    global hu
+
     fp = open("db.txt","w")
     fp.write(f"{emotion}\t{hs}\t{hu}")
     fp.close()
@@ -25,9 +29,7 @@ def setEmtoion():
     global emotion
     id = int(request.get_json()["id"])
     emotion = id
-    fp = open("db.txt","w")
-    fp.write(f"{emotion}\t{hs}\t{hu}")
-    fp.close()
+    write_change()
     return ("", 204)
 
 @app.route("/system", methods=["GET"])
@@ -39,9 +41,7 @@ def sendStatus():
 def setMouthSync():
     global hs
     hs = request.get_json()["state"]
-    fp = open("db.txt","w")
-    fp.write(f"{emotion}\t{hs}\t{hu}")
-    fp.close()
+    write_change()
     print("Mouth sync toggled")
     return("", 204)
 
@@ -49,14 +49,13 @@ def setMouthSync():
 def setPatroitism():
     global hu
     hu = request.get_json()["state"]
-    fp = open("db.txt","w")
-    fp.write(f"{emotion}\t{hs}\t{hu}")
-    fp.close()
+    write_change()
     print("Patroitism toggled")
     return("", 204)
 
 
 if __name__ == "__main__":
+    write_change()
     app.run(host="0.0.0.0", port=3000, debug=True)
     fp = open("db.txt", "w")
     fp.write("0\tTrue\tFalse")

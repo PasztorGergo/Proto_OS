@@ -116,7 +116,7 @@ EMOTION = 0
 BOOT_TIME = 10
 IP = sys.argv[1]
 FONTFACE = "Roboto-Regular.ttf"
-patroitism = False
+patriotism = False
 
 FRAME_WIDTH = 64
 FRAME_HEIGHT = 16
@@ -252,7 +252,7 @@ def loop():
   global update_ready
   global current_eye_state
   global EMOTION
-  global patroitism
+  global patriotism
   global FRAME_WIDTH
   global FRAME_HEIGHT
   hall_effect_en = True
@@ -264,17 +264,18 @@ def loop():
     splited = fp.readline().split("\t")
     EMOTION = int(splited[0])
     hall_effect_en = bool(splited[1])
-    patroitism = bool(splited[2])
+    patriotism = bool(splited[2])
   except IOError:
     clear_up()
     exit()
 
   if EMOTION != 6:
+    """
     if GPIO.input(hall_effect_pin) == GPIO.LOW and hall_effect_en:
       current_mouth_state = 1
     else:
       current_mouth_state = 0
-
+    """
     do_blink_update() #Run blink updater
     if update_ready: #If we have a new frame to display
       img = frames_to_img(current_eye_state, current_mouth_state) #Generate image from states
