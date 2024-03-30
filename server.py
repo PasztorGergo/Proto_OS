@@ -5,14 +5,16 @@ app = Flask(__name__)
 hs = True
 emotion = 0
 hu = False
+server_state = 1
 
 def write_change():
     global emotion
     global hs
     global hu
+    global server_state
 
     fp = open("db.txt","w")
-    fp.write(f"{emotion}\t{hs}\t{hu}")
+    fp.write(f"{emotion}\t{hs}\t{hu}\t{server_state}")
     fp.close()
 
 @app.route("/")
@@ -58,5 +60,5 @@ if __name__ == "__main__":
     write_change()
     app.run(host="0.0.0.0", port=3000, debug=True)
     fp = open("db.txt", "w")
-    fp.write("0\tTrue\tFalse")
+    fp.write("0\tTrue\tFalse\t0")
     fp.close()
