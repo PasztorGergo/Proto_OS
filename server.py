@@ -20,7 +20,9 @@ def write_change():
 @app.route("/")
 def index():
     print("Main page opened!")
-    return render_template("index.html", title="controls")
+    with open("db.txt") as fp:
+        spltied = fp.readline().split("\t")
+        return render_template("index.html", title="controls", hall_effect=eval(spltied[1]), patriotism=eval(spltied[2]))
 
 @app.route("/scans")
 def scan_data():
@@ -45,7 +47,7 @@ def setMouthSync():
     hs = request.get_json()["state"]
     write_change()
     print("Mouth sync toggled")
-    return("", 204)
+    return ("", 204)
 
 @app.route("/hungary", methods=["POST"])
 def setPatroitism():
@@ -58,7 +60,9 @@ def setPatroitism():
 
 if __name__ == "__main__":
     write_change()
-    app.run(host="0.0.0.0", port=3000, debug=True)
-    fp = open("db.txt", "w")
-    fp.write("0\tTrue\tFalse\t0")
-    fp.close()
+    try:
+        app.run(host="0.0.0.0", port=3000, debug=True)
+    except:
+        fp = open("db.txt", "w")
+        fp.write("0\tTrue\tFalse\t0")
+        fp.close()
