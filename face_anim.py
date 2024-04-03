@@ -290,15 +290,21 @@ def loop():
   global HALL_EFFECT_PIN
   
 
-  time.sleep(0.05)  #Required for synchronization with the backend
+  time.sleep(0.025)  #Required for synchronization with the backend
   try:
     fp = open("db.txt")
     splited = fp.readline().split("\t")
+
+    #Avoiding overindexing mouth and eye arrays
+    if EMOTION != int(splited[0]):
+      current_mouth_state = 0
+      current_mouth_eye = 0
+
     EMOTION = int(splited[0])
     hall_effect_en = eval(splited[1])
     patriotism = eval(splited[2])
 
-    img = frames_to_img(current_eye_state, current_mouth_state) #Generate image from states
+    img = frames_to_img(current_eye_state, current_mouth_state) #Generate image from state
     
     if patriotism:
       draw_hu_flag(img)
