@@ -327,10 +327,10 @@ def loop():
     do_blink_update() #Run blink updater
     if update_ready: #If we have a new frame to display
       img = frames_to_img(current_eye_state, current_mouth_state) #Generate image from states
-      """if patriotism:
+      if patriotism:
         draw_hu_flag(img)
       else:
-        clear_hu_flag(img)"""
+        clear_hu_flag(img)
       matrix.SetImage(img) #Show em
       update_ready = False #Mark that we have finished with this update
 """ else:
