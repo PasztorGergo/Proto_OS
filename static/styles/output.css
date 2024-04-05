@@ -2856,6 +2856,10 @@ dd {
     width: 66.666667%;
   }
 
+  .md\:w-64 {
+    width: 16rem;
+  }
+
   .md\:w-auto {
     width: auto;
   }
