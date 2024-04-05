@@ -298,7 +298,7 @@ def loop():
     #Avoiding overindexing mouth and eye arrays
     if EMOTION != int(splited[0]):
       current_mouth_state = 0
-      current_mouth_eye = 0
+      current_eye_state = 0
 
     EMOTION = int(splited[0])
     hall_effect_en = eval(splited[1])

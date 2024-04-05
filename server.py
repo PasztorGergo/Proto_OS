@@ -1,5 +1,4 @@
 from flask import Flask, request,render_template
-from tests import ani
 
 app = Flask(__name__)
 hs = True
