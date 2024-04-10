@@ -5,6 +5,7 @@ hs = True
 emotion = 0
 hu = False
 server_state = 1
+default_db_values = "0\tTrue\tFalse\t0"
 
 def write_change():
     global emotion
@@ -63,5 +64,5 @@ if __name__ == "__main__":
         app.run(host="0.0.0.0", port=3000, debug=True)
     except:
         fp = open("db.txt", "w")
-        fp.write("0\tTrue\tFalse\t0")
+        fp.write(default_db_values)
         fp.close()
