@@ -6,7 +6,7 @@ class Canvas:
         self.w = width
         self.h = height
         self.font_src = font_src
-        self.d = Image.draw(self.image)
+        self.d = ImageDraw.Draw(self.image)
     
     def get_canvas(self):
         return self.image

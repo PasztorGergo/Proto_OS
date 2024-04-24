@@ -330,6 +330,7 @@ def bar_loading(image):
 def Boot():
   #vars
   image = Canvas(FRAME_WIDTH*2,FRAME_HEIGHT*2, FONTFACE)
+  #Colors for functionalities
   succ_col = (82, 185, 99)
   fail_col = (206, 41, 57)
 
