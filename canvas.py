@@ -16,8 +16,7 @@ class Canvas:
 
     def static_text(self, text, size=16, position=(0,0), color=(6, 182, 212)):
         font = ImageFont.truetype(self.font_src, size)
-        d.text(position, text, font, color)
+        self.d.text(position, text, color, font)
 
     def clear(self):
-        self.d.rectangle([(0,0),(w,h)], (0,0,0))
-
+        self.d.rectangle([(0,0),(self.w,self.h)], (0,0,0))

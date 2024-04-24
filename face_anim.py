@@ -249,7 +249,7 @@ def draw_spinner(image):
 
     draw.arc([(image_x,image_y),(image_x+arc_size,image_y+arc_size)], start=((i*30)%360), end=((90*(i+1))%360), fill=tuple(col), width=2)
     canvas.paste(canvas,(0,0))
-    canvas.paste(ImageOps.mirror(canvas.crop([(0,0),(FRAME_WIDTH, FRAME_HEIGHT*2)])),(FRAME_WIDTH,0))
+    canvas.paste(ImageOps.mirror(canvas.crop((0,0,FRAME_WIDTH, FRAME_HEIGHT*2))),(FRAME_WIDTH,0))
     matrix.SetImage(canvas)
     i += 1
     time.sleep(0.05)
@@ -272,7 +272,7 @@ def check_server(image, succ_col, fail_col):
       moving_text(function, succ_col, image)
     else:
       function += " : OFF"
-      moving_text(function, succ_col, image)
+      moving_text(function, fail_col, image)
 
 def check_hall_effect(image, succ_col, fail_col):
   function = "Mouth-sync"
@@ -281,17 +281,17 @@ def check_hall_effect(image, succ_col, fail_col):
     moving_text(function, succ_col, image)
   else:
     function += " : OFF"
-    moving_text(function, succ_col, image)
+    moving_text(function, fail_col, image)
 
 def Show_IP(image):
-  first_half, second_half
+  first_half = "0.0."
+  second_half = "0.0"
   try:
     splitted = IP.split(".")
     first_half = ".".join(splitted[0:2])
     second_half = ".".join(splitted[2:])
   except:
-    first_half = "0.0."
-    second_half = "0.0"
+    pass
 
   image.static_text(first_half,position=(4,(FRAME_HEIGHT*2-18)//2))
   image.static_text(second_half,position=(FRAME_WIDTH+4,(FRAME_HEIGHT*2-18)//2))
@@ -308,8 +308,8 @@ def bar_loading(image):
   canvas = image.get_canvas()
   for i in range(FRAME_WIDTH//2):
     temp_img.get_draw().rectangle([(i*2, 0),(i*2+1,32)], fill=tuple(col))
-    canvas.paste(temp_img,(0,0))
-    canvas.paste(ImageOps.mirror(temp_img),(FRAME_WIDTH,0))
+    canvas.paste(temp_img.get_canvas(),(0,0,FRAME_WIDTH,FRAME_HEIGHT*2))
+    canvas.paste(ImageOps.mirror(temp_img.get_canvas()),(FRAME_WIDTH,0,FRAME_WIDTH*2,FRAME_HEIGHT*2))
     matrix.SetImage(canvas)
     time.sleep(abs(0.25-(i/100)))
 
@@ -318,8 +318,8 @@ def bar_loading(image):
   face_img = face_load()
   for i in range(FRAME_WIDTH//2):
     temp_img.get_draw().rectangle([(0, 0),(i*2+1,32)], fill=(0,0,0))
-    canvas.paste(temp_img,(0,0))
-    canvas.paste(ImageOps.mirror(temp_img),(FRAME_WIDTH,0))
+    canvas.paste(temp_img.get_canvas(),(0,0))
+    canvas.paste(ImageOps.mirror(temp_img.get_canvas()),(FRAME_WIDTH,0))
     
     canvas.paste(face_img.crop((0,0,2*i,32)),(0,0))
     canvas.paste(ImageOps.mirror(face_img.crop((0,0,2*i,32))),((FRAME_WIDTH-i)*2,0))
@@ -336,9 +336,9 @@ def Boot():
 
   #EnginEar booting up
   lightning = Image.open("EnginEar_Logo.png").resize((20,28))
-  image.static_text("EnginEar\nbooting up", 12, (4,2))
+  image.static_text(text="EnginEar\nbooting up", size=12, position=(4,2))
   image.get_canvas().paste(lightning, ((FRAME_WIDTH*2 + 20) // 2, (FRAME_HEIGHT*2 - 28) // 2))
-  matrix.SetImage(image)
+  matrix.SetImage(image.get_canvas())
   time.sleep(5)
 
   #Server status
@@ -350,13 +350,13 @@ def Boot():
   check_hall_effect(image, succ_col, fail_col)
   image.clear()
 
-  Show_IP(img_out, sm_fnt, txt)
+  Show_IP(image, sm_fnt, txt)
   time.sleep(5)
 
   #Face load
   bar_loading(image)
   image.clear()
-  matrix.SetImage(face_load(img_out))
+  matrix.SetImage(face_load())
 
 
 if __name__ == "__main__":
