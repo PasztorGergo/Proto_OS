@@ -5,7 +5,7 @@ class Canvas:
         self.image = Image.new("RGB", (width,height))
         self.w = width
         self.h = height
-        self.font_src
+        self.font_src = font_src
         self.d = Image.draw(self.image)
     
     def get_canvas(self):
