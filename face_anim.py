@@ -5,19 +5,27 @@ from PIL import Image, ImageOps, ImageDraw, ImageFont
 import time, math, random, threading, os, sys
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 import RPi.GPIO as GPIO
-
+import busio
+import board
+from canvas import Canvas
 from emotions import emotions
+from adafruit_apds9960.apds9960 import APDS9960
 #from pilmoji import Pilmoji
 
+# Initialize I2C bus
+i2c = busio.I2C(board.SCL, board.SDA)
+
+# Initialize APDS9960 sensor
+apds = APDS9960(i2c)
+
+# Enable proximity and gesture sensing
+apds.enable_proximity = True
 
 #vars
 matrix = None
 
 #Mouth-sync and Bonnet communication setup
 HALL_EFFECT_PIN = 19  #Changing this you have to resolder the pins too
-hall_effect_en = True
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(HALL_EFFECT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)  #R_pull_up is 10k
 
 default_db_values = "0\tTrue\tFalse\t0"
 DO_AUTO_BLINKS = True
@@ -82,6 +90,10 @@ def frames_to_img(eyeframe, mouthframe):
 def init():
   global matrix
   global ring_thread
+
+  hall_effect_en = True
+  GPIO.setmode(GPIO.BCM)
+  GPIO.setup(HALL_EFFECT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)  #R_pull_up is 10k
   
   options = RGBMatrixOptions()
   options.rows = 32
@@ -181,14 +193,20 @@ def loop():
     fp = open("db.txt")
     splited = fp.readline().split("\t")
 
-    #Avoiding overindexing mouth and eye arrays
+     #Avoiding overindexing mouth and eye arrays
     if EMOTION != int(splited[0]):
       current_mouth_state = 0
       current_eye_state = 0
 
-    EMOTION = int(splited[0])
     hall_effect_en = eval(splited[1])
     patriotism = eval(splited[2])
+
+    if apds.proximity > 190:
+      current_mouth_state = 0
+      current_eye_state = 0
+      EMOTION = 3
+    else:
+      EMOTION = int(splited[0])
 
     img = frames_to_img(current_eye_state, current_mouth_state) #Generate image from state
     
@@ -219,60 +237,53 @@ def loop():
     matrix.SetImage(img) #Show em
     update_ready = False #Mark that we have finished with this update
 
-def Paste_text_frame(txt, img_out, pos1, pos2):
-  img_out.paste(txt, pos1)
-  img_out.paste(txt, pos2)
-
-def draw_spinner(img_out):
-  canvas = Image.new("RGB", (FRAME_WIDTH*2, FRAME_HEIGHT*2))
-  d = ImageDraw.Draw(canvas)
+def draw_spinner(image):
+  canvas = image.get_canvas()
+  draw = image.get_draw()
   i = 0
   arc_size = 24
   image_x = (FRAME_WIDTH - arc_size) // 2
   image_y = (FRAME_HEIGHT*2 - arc_size) // 2
   while i < 20:
-    d.rectangle([(0,0), (FRAME_WIDTH, FRAME_HEIGHT*2)], (0,0,0))
-    Paste_text_frame(canvas, img_out, (0,0), (canvas.width,0))
+    image.clear()
 
-    d.arc([(image_x,image_y),(image_x+arc_size,image_y+arc_size)], start=((i*30)%360), end=((90*(i+1))%360), fill=tuple(col), width=2)
-    img_out.paste(canvas,(0,0))
-    img_out.paste(canvas,(FRAME_WIDTH,0))
-    matrix.SetImage(img_out)
+    draw.arc([(image_x,image_y),(image_x+arc_size,image_y+arc_size)], start=((i*30)%360), end=((90*(i+1))%360), fill=tuple(col), width=2)
+    canvas.paste(canvas,(0,0))
+    canvas.paste(ImageOps.mirror(canvas.crop([(0,0),(FRAME_WIDTH, FRAME_HEIGHT*2)])),(FRAME_WIDTH,0))
+    matrix.SetImage(canvas)
     i += 1
     time.sleep(0.05)
 
-def moving_text(fnt, title, color, img_out):
-  canvas = Image.new("RGB", (FRAME_WIDTH*2, FRAME_HEIGHT*2))
-  d = ImageDraw.Draw(canvas)
+def moving_text(title, color, image):
+  canvas = image.get_canvas()
+  draw = image.get_draw()
   for i in range(FRAME_WIDTH*2):
-    d.rectangle([(0,0), (FRAME_WIDTH*2, FRAME_HEIGHT*2)], (0,0,0))
-    d.text((2*(FRAME_WIDTH-i),(FRAME_HEIGHT*2 - 18) //2),title, font=fnt, fill=color)
-    img_out.paste(canvas,(0,0))
-    matrix.SetImage(img_out)
+    image.clear()
+    image.static_text(title, 16, (2*(FRAME_WIDTH-i),(FRAME_HEIGHT*2 - 18) //2), color)
+    matrix.SetImage(canvas)
     time.sleep(0.04)
 
-def check_server(txt, fnt, d, img_out,  succ_col, fail_col):
+def check_server(image, succ_col, fail_col):
   function = "Server"
   with open("db.txt") as fp:
     splited = fp.readline().split("\t")
     if int(splited[3]) > 0:
       function += " : ON"
-      moving_text(fnt, function, succ_col, img_out)
+      moving_text(function, succ_col, image)
     else:
       function += " : OFF"
-      moving_text(fnt, function, fail_col, img_out)
+      moving_text(function, succ_col, image)
 
-def check_hall_effect(txt, fnt, d, img_out, succ_col, fail_col):
+def check_hall_effect(image, succ_col, fail_col):
   function = "Mouth-sync"
   if GPIO.input(HALL_EFFECT_PIN) == GPIO.LOW:
     function += " : ON"
-    moving_text(fnt, function, succ_col, img_out)
+    moving_text(function, succ_col, image)
   else:
     function += " : OFF"
-    moving_text(fnt, function, fail_col, img_out)
+    moving_text(function, succ_col, image)
 
-def Show_IP(img_out, fnt, canvas):
-  d = ImageDraw.Draw(canvas)
+def Show_IP(image):
   first_half, second_half
   try:
     splitted = IP.split(".")
@@ -282,77 +293,68 @@ def Show_IP(img_out, fnt, canvas):
     first_half = "0.0."
     second_half = "0.0"
 
-  d.text((4,(FRAME_HEIGHT*2-18)//2),first_half, font=fnt, fill=tuple(col))
-  d.text((FRAME_WIDTH+4,(FRAME_HEIGHT*2-18)//2),second_half, font=fnt, fill=tuple(col))
-  img_out.paste(canvas,(0,0))
-  matrix.SetImage(img_out)
+  image.static_text(first_half,position=(4,(FRAME_HEIGHT*2-18)//2))
+  image.static_text(second_half,position=(FRAME_WIDTH+4,(FRAME_HEIGHT*2-18)//2))
+  matrix.SetImage(image.get_canvas())
 
-def face_load(img_out):
+def face_load():
   eye_array = frame_to_rows(emotions[EMOTION].eyearray[0])
   mouth_array = frame_to_rows(emotions[EMOTION].moutharray[0])
   img = array_to_img(eye_array+mouth_array,col)
   return img
     
-def bar_loading(txt, fnt, d, img_out):
+def bar_loading(image):
+  temp_img = Canvas(FRAME_WIDTH, FRAME_HEIGHT*2,FONTFACE)
+  canvas = image.get_canvas()
   for i in range(FRAME_WIDTH//2):
-    d.rectangle([(i*2, 0),(i*2+1,32)], fill=tuple(col))
-    img_out.paste(txt,(0,0))
-    img_out.paste(ImageOps.mirror(txt),(FRAME_WIDTH,0))
-    matrix.SetImage(img_out)
+    temp_img.get_draw().rectangle([(i*2, 0),(i*2+1,32)], fill=tuple(col))
+    canvas.paste(temp_img,(0,0))
+    canvas.paste(ImageOps.mirror(temp_img),(FRAME_WIDTH,0))
+    matrix.SetImage(canvas)
     time.sleep(abs(0.25-(i/100)))
 
   time.sleep(0.5)
 
-  face_img = face_load(img_out)
+  face_img = face_load()
   for i in range(FRAME_WIDTH//2):
-    d.rectangle([(0, 0),(i*2+1,32)], fill=(0,0,0))
-    img_out.paste(txt,(0,0))
-    img_out.paste(ImageOps.mirror(txt),(FRAME_WIDTH,0))
+    temp_img.get_draw().rectangle([(0, 0),(i*2+1,32)], fill=(0,0,0))
+    canvas.paste(temp_img,(0,0))
+    canvas.paste(ImageOps.mirror(temp_img),(FRAME_WIDTH,0))
     
-    img_out.paste(face_img.crop((0,0,2*i,32)),(0,0))
-    img_out.paste(ImageOps.mirror(face_img.crop((0,0,2*i,32))),((FRAME_WIDTH-i)*2,0))
+    canvas.paste(face_img.crop((0,0,2*i,32)),(0,0))
+    canvas.paste(ImageOps.mirror(face_img.crop((0,0,2*i,32))),((FRAME_WIDTH-i)*2,0))
 
-    matrix.SetImage(img_out)
+    matrix.SetImage(canvas)
     time.sleep(0.05)
-
-def clear_screens(canvas, img_out):
-  d.rectangle([(0,0), (FRAME_WIDTH, FRAME_HEIGHT*2)], (0,0,0))
-  Paste_text_frame(canvas, img_out, (0,0), (txt.width,0))
-  matrix.SetImage(img_out)
 
 def Boot():
   #vars
-  txt = Image.new("RGB", (FRAME_WIDTH, FRAME_HEIGHT*2)) #Canvas object for boot animations
-  fnt = ImageFont.truetype(FONTFACE, 16)
-  sm_fnt = ImageFont.truetype(FONTFACE, 12)
-  d = ImageDraw.Draw(txt) #For draw context
+  image = Canvas(FRAME_WIDTH*2,FRAME_HEIGHT*2, FONTFACE)
   succ_col = (82, 185, 99)
   fail_col = (206, 41, 57)
-  img_out = Image.new('RGB', (txt.width*2, txt.height)) #Create image with size of both panels
-  
+
   #EnginEar booting up
   lightning = Image.open("EnginEar_Logo.png").resize((20,28))
-  d.text((4,2), "EnginEar\nbooting up", font=sm_fnt, fill=tuple(col))
-  img_out.paste(txt, (0,0))
-  img_out.paste(lightning, ((FRAME_WIDTH*2 + 20) // 2, (FRAME_HEIGHT*2 - 28) // 2))
-  matrix.SetImage(img_out)
+  image.static_text("EnginEar\nbooting up", 12, (4,2))
+  image.get_canvas().paste(lightning, ((FRAME_WIDTH*2 + 20) // 2, (FRAME_HEIGHT*2 - 28) // 2))
+  matrix.SetImage(image)
   time.sleep(5)
 
   #Server status
-  draw_spinner(img_out)
-  check_server(txt, fnt, d, img_out, succ_col, fail_col)
+  draw_spinner(image)
+  check_server(image, succ_col, fail_col)
   
   #Motuh-sync status
-  draw_spinner(img_out)
-  check_hall_effect(txt, fnt, d, img_out, succ_col, fail_col)
-  clear_screens(txt,img_out)
+  draw_spinner(image)
+  check_hall_effect(image, succ_col, fail_col)
+  image.clear()
 
   Show_IP(img_out, sm_fnt, txt)
   time.sleep(5)
 
   #Face load
-  bar_loading(txt, sm_fnt, d, img_out)
-  clear_screens(txt,img_out)
+  bar_loading(image)
+  image.clear()
   matrix.SetImage(face_load(img_out))
 
 
