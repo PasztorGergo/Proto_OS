@@ -233,7 +233,7 @@ def loop():
     if patriotism:
       draw_hu_flag(img)
     else:
-      clear_hu_flag(img)
+      default_side_lights(img)
     matrix.SetImage(img) #Show em
     update_ready = False #Mark that we have finished with this update
 
@@ -350,7 +350,7 @@ def Boot():
   check_hall_effect(image, succ_col, fail_col)
   image.clear()
 
-  Show_IP(image, sm_fnt, txt)
+  Show_IP(image)
   time.sleep(5)
 
   #Face load
