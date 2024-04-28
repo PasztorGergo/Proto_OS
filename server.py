@@ -1,6 +1,8 @@
 from flask import Flask, request,render_template
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 hs = True
 emotion = 0
 hu = False
@@ -16,17 +18,6 @@ def write_change():
     fp = open("db.txt","w")
     fp.write(f"{emotion}\t{hs}\t{hu}\t{server_state}")
     fp.close()
-
-@app.route("/")
-def index():
-    print("Main page opened!")
-    with open("db.txt") as fp:
-        spltied = fp.readline().split("\t")
-        return render_template("index.html", title="controls", hall_effect=eval(spltied[1]), patriotism=eval(spltied[2]))
-
-@app.route("/scans")
-def scan_data():
-    return render_template("scans.html", title="scans")
 
 @app.route("/emotion", methods=["POST"])
 def setEmtoion():
@@ -56,7 +47,6 @@ def setPatroitism():
     write_change()
     print("Patroitism toggled")
     return("", 204)
-
 
 if __name__ == "__main__":
     write_change()
