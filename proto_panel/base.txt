@@ -1,7 +1,0 @@
-
-var modelParams = "";
-
-(function() {
-  if (typeof module !== 'undefined' && typeof module.exports !== 'undefined')
-    module.exports = modelParams
-})(); 
