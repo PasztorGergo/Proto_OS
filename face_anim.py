@@ -27,7 +27,7 @@ matrix = None
 #Mouth-sync and Bonnet communication setup
 HALL_EFFECT_PIN = 19  #Changing this you have to resolder the pins too
 
-default_db_values = "0\tTrue\tFalse\t0"
+default_db_values = "0\tTrue\tFalse\t1"
 DO_AUTO_BLINKS = True
 EMOTION = 0
 IP = sys.argv[1]
@@ -90,6 +90,7 @@ def frames_to_img(eyeframe, mouthframe):
 def init():
   global matrix
   global ring_thread
+  global default_db_values
 
   hall_effect_en = True
   GPIO.setmode(GPIO.BCM)
@@ -218,6 +219,7 @@ def loop():
 
     matrix.SetImage(img) #Show em
     update_ready = False #Mark that we have finished with this update
+    fp.close()
   except IOError:
     pass
   except:
