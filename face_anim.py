@@ -192,21 +192,22 @@ def loop():
   try:
     fp = open("db.txt")
     splited = fp.readline().split("\t")
-
+    next_emotion = EMOTION
+    if(len(splited) > 1):
+      next_emotion = int(splited[0]) 
+      hall_effect_en = eval(splited[1])
+      patriotism = eval(splited[2])
      #Avoiding overindexing mouth and eye arrays
-    if EMOTION != int(splited[0]):
+    if EMOTION != next_emotion:
       current_mouth_state = 0
       current_eye_state = 0
-
-    hall_effect_en = eval(splited[1])
-    patriotism = eval(splited[2])
 
     if apds.proximity > 190:
       current_mouth_state = 0
       current_eye_state = 0
       EMOTION = 3
     else:
-      EMOTION = int(splited[0])
+      EMOTION = next_emotion
 
     img = frames_to_img(current_eye_state, current_mouth_state) #Generate image from state
     
