@@ -218,6 +218,8 @@ def loop():
     matrix.SetImage(img) #Show em
     update_ready = False #Mark that we have finished with this update
   except IOError:
+    pass
+  except:
     clear_up()
     exit()
 
