@@ -73,7 +73,7 @@ def row_to_rgb(row, row_id, col_on_from, col_on_to,col_off):
 #Take pixel arrays and turn them into an image
 def array_to_img(arr, on_col):
   arr2 = []
-  for i in len(arr):
+  for i in range(len(arr)):
     arr2.append(row_to_rgb(arr[i], i,on_col, [249,115,22],[0,0,0]))
   return Image.fromarray(np.uint8(arr2)).convert("RGB")
 
