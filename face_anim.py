@@ -74,7 +74,14 @@ def row_to_rgb(row, row_id, col_on_from, col_on_to,col_off):
 def array_to_img(arr, on_col):
   arr2 = []
   for i in range(len(arr)):
-    arr2.append(row_to_rgb(arr[i], i,on_col, [249,115,22],[0,0,0]))
+    if patriotism and i < 11:
+      arr2.append(row_to_rgb(arr[i], i, [206, 41, 57], [206, 41, 57],[0,0,0]))
+    elif patriotism and i >= 11 and i <22:
+      arr2.append(row_to_rgb(arr[i], i, [255, 255, 255], [255, 255, 255],[0,0,0]))
+    elif patriotism and i >= 22:
+      arr2.append(row_to_rgb(arr[i], i, [71, 112, 80], [71, 112, 80],[0,0,0]))
+    else:
+      arr2.append(row_to_rgb(arr[i], i,on_col, [249,115,22],[0,0,0]))
   return Image.fromarray(np.uint8(arr2)).convert("RGB")
 
 #Take the current frame states and turn them into a image to send to the panels
