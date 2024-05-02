@@ -56,13 +56,16 @@ def frame_to_rows(frame):
   return rows
 
 #Turn a row with single-bit pixels into a row with RGB pixels
-def row_to_rgb(row, col_on, col_off):
+def row_to_rgb(row, row_id, col_on_from, col_on_to,col_off):
   new_row = []
   for byte in row:
     for i in range(8):
       bit = byte >> 7-i & 1
       if bit == 1:
-        new_row.append(col_on)
+        r = int(col_on_from[0] + (col_on_to[0] - col_on_from[0]) * row_id / 31)
+        g = int(col_on_from[1] + (col_on_to[1] - col_on_from[1]) * row_id / 31)
+        b = int(col_on_from[2] + (col_on_to[2] - col_on_from[2]) * row_id / 31)
+        new_row.append([r,g,b])
       else:
         new_row.append(col_off)
   return new_row
@@ -70,8 +73,8 @@ def row_to_rgb(row, col_on, col_off):
 #Take pixel arrays and turn them into an image
 def array_to_img(arr, on_col):
   arr2 = []
-  for row in arr:
-    arr2.append(row_to_rgb(row, on_col, [0,0,0]))
+  for i in len(arr):
+    arr2.append(row_to_rgb(arr[i], i,on_col, [249,115,22],[0,0,0]))
   return Image.fromarray(np.uint8(arr2)).convert("RGB")
 
 #Take the current frame states and turn them into a image to send to the panels
