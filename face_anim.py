@@ -198,8 +198,9 @@ def loop():
   global current_mouth_state
   global HALL_EFFECT_PIN
   
+  POLL_TIME = 0.025
 
-  time.sleep(0.025)  #Required for synchronization with the backend
+  time.sleep(POLL_TIME)  #Required for synchronization with the backend
   try:
     fp = open("db.txt")
     splited = fp.readline().split("\t")
@@ -231,6 +232,7 @@ def loop():
     update_ready = False #Mark that we have finished with this update
     fp.close()
   except IOError:
+    #Couldn't read file in the current stage. Retry in the next one
     pass
   except:
     clear_up()
@@ -238,7 +240,7 @@ def loop():
 
   if len(emotions[EMOTION].moutharray) == 4:
     if (GPIO.input(HALL_EFFECT_PIN) == GPIO.HIGH and hall_effect_en):
-      do_mouth_update(True) #Motuh opens
+      do_mouth_update(True) #Mouth opens
     else:
       do_mouth_update(False)  #Mouth closes
       
