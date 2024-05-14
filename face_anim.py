@@ -73,6 +73,7 @@ def row_to_rgb(row, row_id, col_on_from, col_on_to,col_off):
 
 #Take pixel arrays and turn them into an image
 def array_to_img(arr, on_col):
+  global EMOTION
   arr2 = []
   for i in range(len(arr)):
     if patriotism and i < 11:
