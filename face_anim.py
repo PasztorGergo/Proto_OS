@@ -36,6 +36,7 @@ FONTFACE = "Roboto-Regular.ttf"
 FRAME_WIDTH = 64
 FRAME_HEIGHT = 16
 col = [6, 182, 212] #Color of pixels
+col_sec = [16,185,129] #Secondary color of pixels
 
 current_mouth_state = 0
 current_eye_state = 0
@@ -81,7 +82,7 @@ def array_to_img(arr, on_col):
     elif patriotism and i >= 22:
       arr2.append(row_to_rgb(arr[i], i, [71, 112, 80], [71, 112, 80],[0,0,0]))
     else:
-      arr2.append(row_to_rgb(arr[i], i,on_col, [249,115,22],[0,0,0]))
+      arr2.append(row_to_rgb(arr[i], i,on_col, col_sec if EMOTION != 5 else [245,74,0],[0,0,0]))
   return Image.fromarray(np.uint8(arr2)).convert("RGB")
 
 #Take the current frame states and turn them into a image to send to the panels
