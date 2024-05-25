@@ -1,4 +1,5 @@
 from flask import Flask, request,render_template
+from fan_control import set_fan_speed
 
 app = Flask(__name__)
 hs = True
@@ -57,6 +58,11 @@ def setPatroitism():
     print("Patroitism toggled")
     return("", 204)
 
+
+@app.route("/fan", methods=["POST"])
+def setFanSpeed():
+    set_fan_speed(request.get_json()["speed"])
+    return ("", 204)
 
 if __name__ == "__main__":
     write_change()
