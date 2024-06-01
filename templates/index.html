@@ -133,7 +133,7 @@
         }).then((res) => {
           if(res.ok){
             res.json().then((x) => {
-              fanRange.value = x;
+              fanRange.value = x?.speed;
             })
           }
         })
