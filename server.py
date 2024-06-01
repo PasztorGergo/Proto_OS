@@ -61,8 +61,9 @@ def setPatroitism():
 
 @app.route("/fan", methods=["POST"])
 def setFanSpeed():
-    set_fan_speed(request.get_json()["speed"])
-    return ("", 204)
+    speed = request.get_json()["speed"]
+    set_fan_speed(speed)
+    return {"speed": speed}
 
 if __name__ == "__main__":
     write_change()

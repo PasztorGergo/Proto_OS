@@ -70,8 +70,8 @@
           <ul class="text-primary-light mt-4 flex flex-col gap-4">
             <li>Power</li>
             <li id="os"></li>
-            <li id="fan">
-              <input type="range" max="100" min="0" step="10" >
+            <li>
+              <input id="fan" type="range" max="100" min="0" step="10" value="50">
             </li>
           </ul>
         </div>
@@ -99,6 +99,7 @@
     const hallBtn = document.getElementById("hall-btn");
     const emotions = document.querySelectorAll("li.emotion");
     const hungary = document.getElementById("hungary");
+    const fanRange = document.getElementById("fan");
     let emotion = 0;
 
     //Setting default as active emotion when inicialized
@@ -119,6 +120,25 @@
         os.innerHTML = `Couldn't load OS`;
       }
     })
+
+    //Fan
+    if(fanRange){
+      fanRange.addEventListener("change", (e)=>{
+        fetch("/fan", {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body: JSON.stringify({speed: e.target.value})
+        }).then((res) => {
+          if(res.ok){
+            res.json().then((x) => {
+              fanRange.value = x;
+            })
+          }
+        })
+      })
+    }
 
     //Hall-effect sensor
     if(hallState){
