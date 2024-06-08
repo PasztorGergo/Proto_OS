@@ -33,7 +33,7 @@ def scan_data():
 @app.route("/emotion", methods=["POST"])
 def setEmtoion():
     id = int(request.get_json()["id"])
-    send_emotion([0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09][id])
+    send_emotion(id)
     return ("", 204)
 
 @app.route("/system", methods=["GET"])
