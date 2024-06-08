@@ -1,5 +1,4 @@
 import smbus2
-from typing import Literal
 
 DEVICE_BUS = 1
 DEVICE_ADDR = 0x15
