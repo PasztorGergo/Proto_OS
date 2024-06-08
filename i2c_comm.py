@@ -1,11 +1,8 @@
-import smbus2
+from smbus2 import SMBus
 
+TEENSY_ADDR = 0x3c
 DEVICE_BUS = 1
-DEVICE_ADDR = 0x15
-
-bus = smbus2.SMBus(DEVICE_BUS)
 
 def send_emotion(id):
-    bus.write_byte_data(DEVICE_ADDR, 0x00, id)
-
-
+    with SMBus(DEVICE_BUS) as bus:
+        bus.write_byte_data(TEENSY_ADDR, 0x00, id)
