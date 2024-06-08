@@ -4,7 +4,7 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setup(12, GPIO.OUT)
 
 fan = GPIO.PWM(12, 100)
-fan.start(0)
+fan.start(50.)
 
 def set_fan_speed(percent):
     if percent >= 0 or percent <= 100:

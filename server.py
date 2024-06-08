@@ -1,5 +1,6 @@
 from flask import Flask, request,render_template
 from fan_control import set_fan_speed
+from i2c_comm import send_emotion
 
 app = Flask(__name__)
 hs = True
@@ -31,10 +32,8 @@ def scan_data():
 
 @app.route("/emotion", methods=["POST"])
 def setEmtoion():
-    global emotion
     id = int(request.get_json()["id"])
-    emotion = id
-    write_change()
+    send_emotion([0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09][id])
     return ("", 204)
 
 @app.route("/system", methods=["GET"])
@@ -64,6 +63,11 @@ def setFanSpeed():
     speed = int(request.get_json()["speed"])
     set_fan_speed(speed)
     return {"speed": speed}
+
+@app.route("/rave", methods=["POST"])
+def toggleRaveMode():
+    #Implement rave mode toggling here
+    return ("", 204)
 
 if __name__ == "__main__":
     write_change()
