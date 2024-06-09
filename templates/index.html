@@ -79,8 +79,8 @@
             <h3 class="px-4 py-2 md:w-2/3 bg-[#74DC6E] bg-opacity-25 text-primary-light text-opacity-80">Secondary</h3>
           <ul class="text-primary-light mt-4 flex flex-col gap-4">
             <li id="hall" class="flex items-center gap-4">
-              <button onclick="toggleHallState()" class="transition-all duration-500 rounded-full p-2 h-12 aspect-square" id="hall-btn"></button>
-              Hall-effect sensor
+              <button onclick="toggleRaveMode()" class="transition-all duration-500 rounded-full p-2 h-12 aspect-square" id="rave-btn"></button>
+              Rave mode
             </li>
             <li class="flex items-center gap-4">
               <button onclick="togglePatroitismMode()" class="transition-all duration-500 rounded-full p-2 h-12 aspect-square" id="hungary">ON</button>
@@ -93,10 +93,9 @@
   <script>
     const triangle = document.getElementById("triangle");
     const os = document.getElementById("os");
-    let hallState = {{ hall_effect|tojson }};
-    let patriotismState = {{ patriotism|tojson }};
-    const hall = document.getElementById("hall");
-    const hallBtn = document.getElementById("hall-btn");
+    let raveState = {{ rave_mode | tojson }};
+    let patriotismState = {{ patriotism | tojson }};
+    const raveBtn = document.getElementById("rave-btn");
     const emotions = document.querySelectorAll("li.emotion");
     const hungary = document.getElementById("hungary");
     const fanRange = document.getElementById("fan");
@@ -140,17 +139,17 @@
       })
     }
 
-    //Hall-effect sensor
-    if(hallState){
-      hallBtn.innerHTML = "ON";
-      hallBtn.classList.add("on");
+    //Rave mode
+    if(raveState){
+      raveBtn.innerHTML = "ON";
+      raveBtn.classList.add("on");
     }else{
-      hallBtn.innerHTML = "OFF";
-      hallBtn.classList.add("off");
+      raveBtn.innerHTML = "OFF";
+      raveBtn.classList.add("off");
     }
-    function toggleHallState(){
-      if(hallState){
-        fetch("/hall-effect", {
+    function toggleRaveMode(){
+      if(raveState){
+        fetch("/rave-mode", {
           method:"POST",
           body: JSON.stringify({state: "False"}),
           headers:{
@@ -158,13 +157,13 @@
           }
         }).then((res) => {
           if(res.ok){
-            hallBtn.classList.replace("on", "off");
-            hallBtn.innerHTML = "OFF";
-            hallState = !hallState
+            raveBtn.classList.replace("on", "off");
+            raveBtn.innerHTML = "OFF";
+            raveState = !raveState
           }
         }).catch(()=>alert("Someting went wrong"))
       }else{
-        fetch("/hall-effect", {
+        fetch("/rave-mode", {
           method:"POST",
           body: JSON.stringify({state: "True"}),
           headers:{
@@ -172,9 +171,9 @@
           }
         }).then((res) => {
           if(res.ok){
-            hallBtn.classList.replace("off", "on");
-            hallBtn.innerHTML = "ON";
-            hallState = !hallState
+            raveBtn.classList.replace("off", "on");
+            raveBtn.innerHTML = "ON";
+            raveState = !raveState
           }
         }).catch(()=>alert("Someting went wrong"))
       }
