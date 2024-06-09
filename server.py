@@ -1,6 +1,6 @@
 from flask import Flask, request,render_template
-#from fan_control import set_fan_speed
-#from i2c_comm import send_static_emotion, send_dynamic_emotion, send_secondary_feature, send_primary_feature
+from fan_control import set_fan_speed
+from i2c_comm import send_static_emotion, send_dynamic_emotion, send_secondary_feature, send_primary_feature
 
 app = Flask(__name__)
 hs = True
@@ -33,7 +33,7 @@ def scan_data():
 @app.route("/emotion", methods=["POST"])
 def setEmtoion():
     id = int(request.get_json()["id"])
-    #send_static_emotion(id)
+    send_static_emotion(id)
     return ("", 204)
 
 @app.route("/system", methods=["GET"])
@@ -46,7 +46,7 @@ def setMouthSync():
     global hs
     state = request.get_json()["state"]
     write_change()
-    #send_secondary_feature(eval(state), 0b0)
+    send_secondary_feature(eval(state), 0b0)
     print("Rave mode toggled")
     return ("", 204)
 
@@ -55,18 +55,16 @@ def setPatroitism():
     global hu
     hu = request.get_json()["state"]
     write_change()
-    #send_secondary_feature(eval(state), 0b1)
+    send_secondary_feature(eval(state), 0b1)
     print("Patroitism toggled")
     return("", 204)
 
 
-"""
 @app.route("/fan", methods=["POST"])
 def setFanSpeed():
     speed = int(request.get_json()["speed"])
     set_fan_speed(speed)
     return {"speed": speed}
-"""
 
 if __name__ == "__main__":
     write_change()
