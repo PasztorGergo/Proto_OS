@@ -3,7 +3,7 @@ from fan_control import set_fan_speed
 from i2c_comm import send_static_emotion, send_dynamic_emotion, send_secondary_feature, send_primary_feature
 
 app = Flask(__name__)
-hs = True
+rave = False
 emotion = 0
 hu = False
 server_state = 1
@@ -11,12 +11,12 @@ default_db_values = "0\tTrue\tFalse\t0"
 
 def write_change():
     global emotion
-    global hs
+    global rave
     global hu
     global server_state
 
     fp = open("db.txt","w")
-    fp.write(f"{emotion}\t{hs}\t{hu}\t{server_state}")
+    fp.write(f"{emotion}\t{rave}\t{hu}\t{server_state}")
     fp.close()
 
 @app.route("/")
@@ -43,17 +43,17 @@ def sendStatus():
 
 @app.route("/rave-mode", methods=["POST"])
 def setMouthSync():
-    global hs
+    global rave
     state = request.get_json()["state"]
     write_change()
     send_secondary_feature(eval(state), 0b0)
     print("Rave mode toggled")
-    return ("", 204)
+    return {"state": 1}
 
 @app.route("/hungary", methods=["POST"])
 def setPatroitism():
     global hu
-    hu = request.get_json()["state"]
+    state = request.get_json()["state"]
     write_change()
     send_secondary_feature(eval(state), 0b1)
     print("Patroitism toggled")
