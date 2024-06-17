@@ -150,14 +150,14 @@
     function toggleRaveMode(){
       fetch("/rave-mode", {
         method:"POST",
-        body: JSON.stringify({state: raveState?"True":"False"}),
+        body: JSON.stringify({state: raveState?"False":"True"}),
         headers:{
           "Content-Type":"application/json"
         }
       }).then((res)=>{
         if(res.ok){
           res.json().then(x => {
-            raveState: x > 0 ? true : false
+            raveState = x.state;
           })
         }
       }).catch(()=>{
@@ -185,14 +185,14 @@
     function togglePatroitismMode(){
       fetch("/hungary", {
         method:"POST",
-        body: JSON.stringify({state: patriotismState?"True":"False"}),
+        body: JSON.stringify({state: patriotismState?"False":"True"}),
         headers:{
           "Content-Type":"application/json"
         }
       }).then((res)=>{
         if(res.ok){
           res.json().then(x => {
-            patriotismState: x > 0 ? true : false
+            patriotismState = x.state;
           })
         }
       }).catch(()=>{
