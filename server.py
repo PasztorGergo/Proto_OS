@@ -6,22 +6,20 @@ app = Flask(__name__)
 rave = False
 emotion = 0
 hu = False
-server_state = 1
-default_db_values = "0\tTrue\tFalse\t0"
+dynamic_emotion = False
+default_db_values = "0\tFalse\tFalse\False"
 
 def write_change():
     global emotion
     global rave
     global hu
-    global server_state
+    global dynamic_emotion
 
-    fp = open("db.txt","w")
-    fp.write(f"{emotion}\t{rave}\t{hu}\t{server_state}")
-    fp.close()
+    with open("db.txt", "w") as fp:
+        fp.write(f"{emotion}\t{rave}\t{hu}\t{dynamic_emotion}")
 
 @app.route("/")
 def index():
-    print("Main page opened!")
     with open("db.txt") as fp:
         spltied = fp.readline().split("\t")
         return render_template("index.html", title="controls", rave_mode=eval(spltied[1]), patriotism=eval(spltied[2]))
@@ -30,34 +28,44 @@ def index():
 def scan_data():
     return render_template("scans.html", title="scans")
 
-@app.route("/emotion", methods=["POST"])
+@app.route("/dynamic-emotion", methods=["POST"])
+def toggleDynamicEmotion():
+    global dynamic_emotion
+    dynamic_emotion = not dynamic_emotion
+    return {"state": dynamic_emotion}
+
+
+@app.route("/satic-emotion", methods=["POST"])
 def setEmtoion():
-    id = int(request.get_json()["id"])
-    send_static_emotion(id)
-    return ("", 204)
+    if not dynamic_emotion:
+        id = int(request.get_json()["id"])
+        send_static_emotion(id)
+        return {"id": id}
+    else:
+        return ("Dynamic emotions on", 403)
 
 @app.route("/system", methods=["GET"])
 def sendStatus():
     print("Received")
-    return {"version":"1.0"}
+    return {"version":"1.1"}
 
 @app.route("/rave-mode", methods=["POST"])
-def setMouthSync():
+def toggleRaveMode():
     global rave
-    state = request.get_json()["state"]
+    rave = request.get_json()["state"]
     write_change()
-    send_secondary_feature(eval(state), 0b0)
+    send_secondary_feature(eval(rave), 0b0)
     print("Rave mode toggled")
-    return {"state": 1}
+    return {"state": eval(rave)}
 
 @app.route("/hungary", methods=["POST"])
 def setPatroitism():
     global hu
-    state = request.get_json()["state"]
+    hu = request.get_json()["state"]
     write_change()
-    send_secondary_feature(eval(state), 0b1)
+    send_secondary_feature(eval(hu), 0b1)
     print("Patroitism toggled")
-    return("", 204)
+    return {"state": eval(hu)}
 
 
 @app.route("/fan", methods=["POST"])
@@ -71,6 +79,5 @@ if __name__ == "__main__":
     try:
         app.run(host="0.0.0.0", port=3000, debug=True)
     except:
-        fp = open("db.txt", "w")
-        fp.write(default_db_values)
-        fp.close()
+        with open("db.txt", "w") as fp:
+            fp.write(default_db_values)

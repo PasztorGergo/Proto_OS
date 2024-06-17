@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.emotion {
+  @apply bg-primary bg-opacity-0 transition-all p-2;
+}
+
+.emotion.active {
+  @apply bg-opacity-10;
+}
+
 input[type="range"] {
   -webkit-appearance: none;
   margin: 18px 0;

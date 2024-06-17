@@ -148,35 +148,21 @@
       raveBtn.classList.add("off");
     }
     function toggleRaveMode(){
-      if(raveState){
-        fetch("/rave-mode", {
-          method:"POST",
-          body: JSON.stringify({state: "False"}),
-          headers:{
-            "Content-Type":"application/json"
-          }
-        }).then((res) => {
-          if(res.ok){
-            raveBtn.classList.replace("on", "off");
-            raveBtn.innerHTML = "OFF";
-            raveState = !raveState
-          }
-        }).catch(()=>alert("Someting went wrong"))
-      }else{
-        fetch("/rave-mode", {
-          method:"POST",
-          body: JSON.stringify({state: "True"}),
-          headers:{
-            "Content-Type":"application/json"
-          }
-        }).then((res) => {
-          if(res.ok){
-            raveBtn.classList.replace("off", "on");
-            raveBtn.innerHTML = "ON";
-            raveState = !raveState
-          }
-        }).catch(()=>alert("Someting went wrong"))
-      }
+      fetch("/rave-mode", {
+        method:"POST",
+        body: JSON.stringify({state: raveState?"True":"False"}),
+        headers:{
+          "Content-Type":"application/json"
+        }
+      }).then((res)=>{
+        if(res.ok){
+          res.json().then(x => {
+            raveState: x > 0 ? true : false
+          })
+        }
+      }).catch(()=>{
+        window.alert("Something went wrong!");
+      });
     }
 
     //Patroitism mode
@@ -189,35 +175,21 @@
       hungary.classList.add("huoff");
     }
     function togglePatroitismMode(){
-      if(hungary.classList.contains("huon")){
-        fetch("/hungary", {
-          method:"POST",
-          body: JSON.stringify({state: "False"}),
-          headers:{
-            "Content-Type":"application/json"
-          }
-        }).then((res) => {
-          if(res.ok){
-            hungary.classList.replace("huon", "huoff");
-            hungary.innerHTML = "OFF";
-            patriotismState = !patriotismState
-          }
-        }).catch(()=>alert("Someting went wrong"))
-      }else{
-        fetch("/hungary", {
-          method:"POST",
-          body: JSON.stringify({state: "True"}),
-          headers:{
-            "Content-Type":"application/json"
-          }
-        }).then((res) => {
-          if(res.ok){
-            hungary.classList.replace("huoff", "huon");
-            hungary.innerHTML = "ON";
-            patriotismState = !patriotismState
-          }
-        }).catch(()=>alert("Someting went wrong"))
-      }
+      fetch("/hungary", {
+        method:"POST",
+        body: JSON.stringify({state: patriotismState?"True":"False"}),
+        headers:{
+          "Content-Type":"application/json"
+        }
+      }).then((res)=>{
+        if(res.ok){
+          res.json().then(x => {
+            patriotismState: x > 0 ? true : false
+          })
+        }
+      }).catch(()=>{
+        window.alert("Something went wrong!");
+      });
     }
 
     //Threat level indicator
@@ -238,7 +210,7 @@
         triangle.style.left = "30%";
       }
 
-      const res = await fetch(`/emotion`, {
+      const res = await fetch(`/static-emotion`, {
         method: "POST",
         body: JSON.stringify({ id }),
         headers: {
