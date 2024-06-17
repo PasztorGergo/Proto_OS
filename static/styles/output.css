@@ -387,6 +387,7 @@ html {
 body {
   font-family: inherit;
   line-height: inherit;
+  background-image: radial-gradient(#26558C 0%,#090A20 65%);
 }
 
 /**

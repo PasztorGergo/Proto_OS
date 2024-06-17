@@ -35,7 +35,7 @@ def toggleDynamicEmotion():
     return {"state": dynamic_emotion}
 
 
-@app.route("/satic-emotion", methods=["POST"])
+@app.route("/static-emotion", methods=["POST"])
 def setEmtoion():
     if not dynamic_emotion:
         id = int(request.get_json()["id"])
