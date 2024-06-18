@@ -241,13 +241,7 @@
         console.error("Something went wrong while setting the emotion");
         return;
       }
-      await fetch(`/rave-mode`, {
-        method: "POST",
-        body: JSON.stringify({ state: "False" }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      
       raveState = false;
       raveBtn.classList.remove("on");
       raveBtn.classList.add("off");

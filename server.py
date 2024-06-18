@@ -39,8 +39,10 @@ def toggleDynamicEmotion():
 def setEmtoion():
     if not dynamic_emotion:
         id = int(request.get_json()["id"])
+        rave = False
         send_static_emotion(id)
         return {"id": id}
+        write_change()
     else:
         return ("Dynamic emotions on", 403)
 
