@@ -387,7 +387,6 @@ html {
 body {
   font-family: inherit;
   line-height: inherit;
-  background-image: radial-gradient(#26558C 0%,#090A20 65%);
 }
 
 /**
@@ -32976,7 +32975,26 @@ video {
 }
 
 .emotion.active {
+  border-radius: 0.25rem;
   --tw-bg-opacity: 0.1;
+}
+
+#triangle {
+  -webkit-clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+          clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+body {
+  background-image: radial-gradient(#26558c 0%, #090a20 65%);
+}
+
+#threat-slide,
+#triangle {
+  box-shadow: 0 1px 3px 0 #9ceefc;
+}
+
+#threat-slide {
+  height: 1px;
 }
 
 input[type="range"] {

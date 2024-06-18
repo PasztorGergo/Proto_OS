@@ -24,8 +24,8 @@
         <h2 class="uppercase sm:order-1 order-2 glow-text text-lg md:text-2xl lg:text-3xl">Threat level</h2>
         <div class="sm:order-2 order-1 min-w-fit flex flex-col items-center gap-4">
           <img class="h-12" src="{{url_for('static', filename='assets/range.svg')}}" alt="Threat-o-meter">
-          <div class="bg-primary shadow-[0_0_8px_#9CEEFC] w-full h-[1px] relative flex items-center">
-            <div class="absolute bg-primary shadow-[0_0_8px_#9CEEFC] w-4 h-4 [clip-path:polygon(50%_0%,_0%_100%,_100%_100%)]" id="triangle" />
+          <div id="threat-slide" class="bg-primary w-full relative flex items-center">
+            <div class="absolute bg-primary w-4 h-4" id="triangle" />
           </div>
         </div>
       </div>
@@ -78,12 +78,12 @@
           <div>
             <h3 class="px-4 py-2 md:w-2/3 bg-[#74DC6E] bg-opacity-25 text-primary-light text-opacity-80">Secondary</h3>
           <ul class="text-primary-light mt-4 flex flex-col gap-4">
-            <li id="hall" class="flex items-center gap-4">
-              <button onclick="toggleRaveMode()" class="transition-all duration-500 rounded-full p-2 h-12 aspect-square" id="rave-btn"></button>
+            <li class="flex items-center gap-4">
+              <button onclick="toggleRaveMode()" class="transition-all duration-500 rounded-full p-2 w-12 h-12 aspect-square" id="rave-btn"></button>
               Rave mode
             </li>
             <li class="flex items-center gap-4">
-              <button onclick="togglePatroitismMode()" class="transition-all duration-500 rounded-full p-2 h-12 aspect-square" id="hungary">ON</button>
+              <button onclick="togglePatroitismMode()" class="transition-all duration-500 rounded-full p-2 w-12 h-12 aspect-square" id="hungary">ON</button>
               Patriotism mode
             </li>
           </ul>
@@ -201,9 +201,11 @@
       if(patriotismState){
         hungary.classList.remove("huoff");
         hungary.classList.add("huon");
+        hungary.innerHTML = "ON";
       }else{
         hungary.classList.remove("huon");
         hungary.classList.add("huoff");
+        hungary.innerHTML = "OFF";
       }
     }
 

@@ -1,6 +1,6 @@
 from flask import Flask, request,render_template
-from fan_control import set_fan_speed
-from i2c_comm import send_static_emotion, send_dynamic_emotion, send_secondary_feature, send_primary_feature
+#from fan_control import set_fan_speed
+#from i2c_comm import send_static_emotion, send_dynamic_emotion, send_secondary_feature, send_primary_feature
 
 app = Flask(__name__)
 rave = False
