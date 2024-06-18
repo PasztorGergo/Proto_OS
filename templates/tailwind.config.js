@@ -1,6 +1,7 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./*.{html,js}"],
+  purge: [],
+  content: ["./*.{html}"],
+  darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
       colors: {
@@ -12,6 +13,9 @@ module.exports = {
         title: "#74DC6E",
       },
     },
+  },
+  variants: {
+    extend: {},
   },
   plugins: [],
 };
