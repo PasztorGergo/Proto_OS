@@ -54,7 +54,7 @@ def toggleRaveMode():
     global rave
     rave = request.get_json()["state"]
     write_change()
-    send_secondary_feature(eval(rave), 0b0)
+    #send_secondary_feature(eval(rave), 0b0)
     print("Rave mode toggled")
     return {"state": eval(rave)}
 
@@ -63,7 +63,7 @@ def setPatroitism():
     global hu
     hu = request.get_json()["state"]
     write_change()
-    send_secondary_feature(eval(hu), 0b1)
+    #send_secondary_feature(eval(hu), 0b1)
     print("Patroitism toggled")
     return {"state": eval(hu)}
 
@@ -71,7 +71,7 @@ def setPatroitism():
 @app.route("/fan", methods=["POST"])
 def setFanSpeed():
     speed = int(request.get_json()["speed"])
-    set_fan_speed(speed)
+    #set_fan_speed(speed)
     return {"speed": speed}
 
 if __name__ == "__main__":

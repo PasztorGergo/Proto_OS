@@ -164,11 +164,13 @@
         window.alert("Something went wrong!");
       }).finally(()=>{
         if(raveState){
-          raveBtn.classList.remove("off");
-          raveBtn.classList.add("on");
-        }else{
           raveBtn.classList.remove("on");
           raveBtn.classList.add("off");
+          raveBtn.innerHTML = "OFF";
+        }else{
+          raveBtn.classList.remove("off");
+          raveBtn.classList.add("on");
+          raveBtn.innerHTML = "ON";
         }
       });
     }
@@ -197,16 +199,17 @@
         }
       }).catch(()=>{
         window.alert("Something went wrong!");
-      });
-      if(patriotismState){
-        hungary.classList.remove("huoff");
-        hungary.classList.add("huon");
-        hungary.innerHTML = "ON";
-      }else{
-        hungary.classList.remove("huon");
-        hungary.classList.add("huoff");
-        hungary.innerHTML = "OFF";
-      }
+      }).finally(()=>{
+        if(patriotismState){
+          hungary.classList.remove("huon");
+          hungary.classList.add("huoff");
+          hungary.innerHTML = "OFF";
+        }else{
+          hungary.classList.remove("huoff");
+          hungary.classList.add("huon");
+          hungary.innerHTML = "ON";
+        }
+      })
     }
 
     //Threat level indicator
