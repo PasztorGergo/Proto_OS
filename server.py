@@ -7,7 +7,7 @@ rave = False
 emotion = 0
 hu = False
 dynamic_emotion = False
-default_db_values = "0\tFalse\tFalse\False"
+default_db_values = "0\tFalse\tFalse\tFalse"
 
 def write_change():
     global emotion

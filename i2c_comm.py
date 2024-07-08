@@ -9,7 +9,7 @@ def send_static_emotion(id):
 
 def send_dynamic_emotion(mouth,eye,id):
     with SMBus(DEVICE_BUS) as bus:
-        bus.write_block_data(TEENSY_ADDR, 0x00, [0b01,mouth,eye,id])
+        bus.write_block_data(TEENSY_ADDR, 0x00, [0b01,eye,id])
 
 def send_secondary_feature(state,feature):
     with SMBus(DEVICE_BUS) as bus:
