@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
   </head>
-  <body class="relative min-h-screen pt-16">
+  <body class="relative min-h-screen pt-16 pb-8">
     <header class="relative w-full py-4 lg:px-24 md:px-8 px-4 flex items-center justify-between">
       <div class="flex sm:flex-row flex-col gap-4 sm:gap-8 items-center h-full">
         <img width="64" height="64" alt="Scan logo" src="{{url_for('static', filename='assets/timer.svg')}}" class="mix-blend-normal" />
@@ -72,6 +72,10 @@
               <button onclick="toggleEyeTracking()" class="transition-all duration-500 rounded-full p-2 w-12 h-12 aspect-square" id="eye-btn"></button>
               Eye tracking
             </li>
+            <li class="flex items-center gap-4">
+              <button onclick="toggleMouthTracking()" class="transition-all duration-500 rounded-full p-2 w-12 h-12 aspect-square" id="mouth-btn"></button>
+              Lip synchronization
+            </li>
             <li id="os"></li>
             <li>
               <input id="fan" type="range" max="100" min="0" step="10" value="0">
@@ -93,18 +97,25 @@
         </div>
       </section>
     </main>
+    <footer class="grid place-items-center pt-4">
+      <p class="text-primary-lighter">
+        2024 ©️
+      </p>
+    </footer>
   <script>
     const triangle = document.getElementById("triangle");
     const os = document.getElementById("os");
     let raveState = {{ rave_mode | tojson }};
     let patriotismState = {{ patriotism | tojson }};
+    let trackEye = {{ eye | tojson}};
+    let mouthSynch = {{ mouth | tojson}};
     const raveBtn = document.getElementById("rave-btn");
     const emotions = document.querySelectorAll("li.emotion");
     const hungary = document.getElementById("hungary");
     const fanRange = document.getElementById("fan");
     const eyeBtn = document.getElementById("eye-btn");
-    let trackEye = false;
-    let emotion = 0;
+    const mouthBtn = document.getElementById("mouth-btn");
+    let emotcion = 0;
 
     //Setting default as active emotion when inicialized
     emotions[0].classList.add("active");
@@ -160,6 +171,43 @@
         }
       });
     }
+
+    //Mouth-synch
+    if(mouthSynch){
+      mouthBtn.innerHTML = "ON";
+      mouthBtn.classList.add("on");
+    }else{
+      mouthBtn.innerHTML = "OFF";
+      mouthBtn.classList.add("off");
+    }
+    function toggleMouthTracking(){
+      fetch("/mouth", {
+        method:"POST",
+        body: JSON.stringify({state: mouthSynch?"False":"True"}),
+        headers:{
+          "Content-Type":"application/json"
+        }
+      }).then((res)=>{
+        if(res.ok){
+          res.json().then(x => {
+            mouthSynch = x.state;
+          })
+        }
+      }).catch(()=>{
+        window.alert("Something went wrong!");
+      }).finally(()=>{
+        if(mouthSynch){
+          mouthBtn.classList.remove("on");
+          mouthBtn.classList.add("off");
+          mouthBtn.innerHTML = "OFF";
+        }else{
+          mouthBtn.classList.remove("off");
+          mouthBtn.classList.add("on");
+          mouthBtn.innerHTML = "ON";
+        }
+      });
+    }
+
 
     //Fan
     if(fanRange){

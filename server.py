@@ -7,44 +7,42 @@ emotion = 0
 rave = False
 hu = False
 eye = False
-default_db_values = "0\tFalse\tFalse\tFalse"
+mouth = False
+default_db_values = f"{emotion}\t{rave}\t{hu}\t{eye}\t{mouth}"
 
 def write_change():
     global emotion
     global rave
     global hu
-    global dynamic_emotion
+    global eye
+    global mouth
 
     with open("db.txt", "w") as fp:
-        fp.write(f"{emotion}\t{rave}\t{hu}\t{eye}")
+        fp.write(f"{emotion}\t{rave}\t{hu}\t{eye}\t{mouth}")
 
 @app.route("/")
 def index():
     with open("db.txt") as fp:
         spltied = fp.readline().split("\t")
-        return render_template("index.html", title="controls", rave_mode=eval(spltied[1]), patriotism=eval(spltied[2]))
+        return render_template("index.html", 
+        title="controls", 
+        rave_mode=eval(spltied[1]), 
+        patriotism=eval(spltied[2]), 
+        eye=eval(spltied[3]),
+        mouth=eval(spltied[4]))
 
 @app.route("/scans")
 def scan_data():
     return render_template("scans.html", title="scans")
 
-@app.route("/dynamic-emotion", methods=["POST"])
-def toggleDynamicEmotion():
-    global dynamic_emotion
-    dynamic_emotion = not dynamic_emotion
-    return {"state": dynamic_emotion}
-
 
 @app.route("/static-emotion", methods=["POST"])
 def setEmtoion():
-    if not dynamic_emotion:
-        id = int(request.get_json()["id"])
-        rave = False
-        #send_static_emotion(id)
-        return {"id": id}
-        write_change()
-    else:
-        return ("Dynamic emotions on", 403)
+    id = int(request.get_json()["id"])
+    rave = False
+    send_static_emotion(id)
+    return {"id": id}
+    write_change()
 
 @app.route("/system", methods=["GET"])
 def sendStatus():
@@ -74,7 +72,16 @@ def toggleEyeTracking():
     global eye
     eye = request.get_json()["state"]
     write_change()
+    send_primary_feature(eval(eye), 0b0)
     return {"state": eval(eye)}
+
+@app.route("/mouth", methods=["POST"])
+def toggleMouthSynch():
+    global mouth
+    mouth = request.get_json()["state"]
+    write_change()
+    send_primary_feature(eval(mouth), 0b1)
+    return {"state": eval(mouth)}
 
 @app.route("/fan", methods=["POST"])
 def setFanSpeed():
