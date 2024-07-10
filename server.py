@@ -39,10 +39,11 @@ def scan_data():
 @app.route("/static-emotion", methods=["POST"])
 def setEmtoion():
     id = int(request.get_json()["id"])
-    rave = False
-    send_static_emotion(id)
-    return {"id": id}
-    write_change()
+    if id != 8:
+        rave = False
+        send_static_emotion(id)
+        return {"id": id}
+        write_change()
 
 @app.route("/system", methods=["GET"])
 def sendStatus():
