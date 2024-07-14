@@ -309,11 +309,6 @@
 
     //Sending emotion id to be displayed
     const setEmotion = async (id) => {
-      //Remvoing active from previous emotion
-      emotions[emotion].classList.remove("active");
-      emotion = id;
-      emotions[emotion].classList.add("active");
-
       //Increase threat as getting more furious
       if(id == 5){
         triangle.style.left = "60%"
@@ -333,6 +328,11 @@
         console.error("Something went wrong while setting the emotion");
         return;
       }
+
+      //Remvoing active from previous emotion
+      emotions[emotion].classList.remove("active");
+      emotion = id;
+      emotions[emotion].classList.add("active");
       
       raveState = false;
       raveBtn.classList.remove("on");
