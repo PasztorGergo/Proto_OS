@@ -117,6 +117,9 @@
     const mouthBtn = document.getElementById("mouth-btn");
     let emotion = 0;
 
+    //Setting fan speed
+    fanRange.value = {{speed | tojson}};
+
     //Setting default as active emotion when inicialized
     emotions[0].classList.add("active");
 

@@ -8,7 +8,8 @@ rave = False
 hu = False
 eye = False
 mouth = False
-default_db_values = f"{emotion}\t{rave}\t{hu}\t{eye}\t{mouth}"
+speed = 0
+default_db_values = f"{emotion}\t{rave}\t{hu}\t{eye}\t{mouth}\{speed}"
 
 def write_change():
     global emotion
@@ -18,18 +19,19 @@ def write_change():
     global mouth
 
     with open("db.txt", "w") as fp:
-        fp.write(f"{emotion}\t{rave}\t{hu}\t{eye}\t{mouth}")
+        fp.write(f"{emotion}\t{rave}\t{hu}\t{eye}\t{mouth}\t{speed}")
 
 @app.route("/")
 def index():
     with open("db.txt") as fp:
-        spltied = fp.readline().split("\t")
+        spltied = fp.readline().replace("\n", "").split("\t")
         return render_template("index.html", 
         title="controls", 
         rave_mode=eval(spltied[1]), 
         patriotism=eval(spltied[2]), 
         eye=eval(spltied[3]),
-        mouth=eval(spltied[4]))
+        mouth=eval(spltied[4]),
+        speed=int(speed))
 
 @app.route("/scans")
 def scan_data():
@@ -38,57 +40,77 @@ def scan_data():
 
 @app.route("/static-emotion", methods=["POST"])
 def setEmtoion():
-    id = int(request.get_json()["id"])
-    if id != 8:
-        rave = False
-        send_static_emotion(id)
-        return {"id": id}
-        write_change()
+    global id
+    if int(request.get_json()["id"]) != 8:
+        try:
+            id = int(request.get_json()["id"])
+            send_static_emotion(id)
+            rave = False
+            write_change()
+            return {"id": id}
+        except:
+            return {"id": id}, 500
 
 @app.route("/system", methods=["GET"])
 def sendStatus():
     print("Received")
-    return {"version":"1.1"}
+    return {"version":"1.2"}
 
 @app.route("/rave-mode", methods=["POST"])
 def toggleRaveMode():
     global rave
-    rave = request.get_json()["state"]
-    write_change()
-    send_secondary_feature(eval(rave), 0b0)
-    print("Rave mode toggled")
-    return {"state": eval(rave)}
+    try:
+        rave = request.get_json()["state"]
+        send_secondary_feature(eval(rave), 0b0)
+        print("Rave mode toggled")
+        write_change()
+        return {"state": eval(rave)}
+    except:
+        return {"state": eval(rave)}, 500
 
 @app.route("/hungary", methods=["POST"])
 def setPatroitism():
     global hu
-    hu = request.get_json()["state"]
-    write_change()
-    send_secondary_feature(eval(hu), 0b1)
-    print("Patroitism toggled")
-    return {"state": eval(hu)}
+    try:
+        hu = request.get_json()["state"]
+        send_secondary_feature(eval(hu), 0b1)
+        write_change()
+        print("Patroitism toggled")
+        return {"state": eval(hu)}
+    except:
+        return {"state": eval(hu)}, 500
 
 @app.route("/eye", methods=["POST"])
 def toggleEyeTracking():
     global eye
-    eye = request.get_json()["state"]
-    write_change()
-    send_primary_feature(eval(eye), 0b0)
-    return {"state": eval(eye)}
+    try:
+        eye = request.get_json()["state"]
+        write_change()
+        send_primary_feature(eval(eye), 0b0)
+        return {"state": eval(eye)}
+    except:
+        return {"state": eval(eye)}, 500
 
 @app.route("/mouth", methods=["POST"])
 def toggleMouthSynch():
     global mouth
-    mouth = request.get_json()["state"]
-    write_change()
-    send_primary_feature(eval(mouth), 0b1)
-    return {"state": eval(mouth)}
+    try:
+        mouth = request.get_json()["state"]
+        send_primary_feature(eval(mouth), 0b1)
+        write_change()
+        return {"state": eval(mouth)}
+    except:
+        return {"state": eval(mouth)}, 500
 
 @app.route("/fan", methods=["POST"])
 def setFanSpeed():
-    speed = int(request.get_json()["speed"])
-    set_fan_speed(speed)
-    return {"speed": speed}
+    global speed
+    try:
+        speed = int(request.get_json()["speed"])
+        set_fan_speed(speed)
+        return {"speed": speed}
+    except:
+        return {"speed": speed}, 500
 
 if __name__ == "__main__":
     write_change()
