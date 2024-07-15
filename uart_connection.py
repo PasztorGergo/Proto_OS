@@ -8,7 +8,7 @@ while True:
     data = ser.read(1)  # Read one byte
     with open("db.txt") as fs:
         splitted = fs.readline().replace("\n", "").split()
-        if data and splitted[3]:
+        if data and eval(splitted[3]):
             eye_state = int(data)
             try:
                 send_blink()
