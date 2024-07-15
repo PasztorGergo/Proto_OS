@@ -6,18 +6,18 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-SLAVE_ADDR = 0x3c
+TEENSY_ADDR = 0x3c
 DEVICE_BUS = 1
 
 def send_emotion(id):
     with SMBus(DEVICE_BUS) as bus:
-        bus.write_i2c_block_data(SLAVE_ADDR, 0x00, [id])
+        bus.write_i2c_block_data(TEENSY_ADDR, 0x00, [id])
 
 def send_feature(state,feature):
     with SMBus(DEVICE_BUS) as bus:
-        bus.write_i2c_block_data(SLAVE_ADDR, 0x01, [feature,state])
+        bus.write_i2c_block_data(TEENSY_ADDR, 0x01, [feature,state])
 
 def send_blink():
     with SMBus(DEVICE_BUS) as bus:
-        bus.write_i2c_block_data(SLAVE_ADDR, 0x02, [0x01])
+        bus.write_i2c_block_data(TEENSY_ADDR, 0x02, [0x01])
 
