@@ -1,6 +1,6 @@
 import serial
 import time
-from i2c_comm import send_dynamic_emotion
+from i2c_comm import send_blink
 # Initialize serial connection
 ser = serial.Serial('/dev/serial0', 9600, timeout=1)
 
@@ -11,6 +11,6 @@ while True:
         if data and splitted[3]:
             eye_state = int(data)
             try:
-                send_dynamic_emotion(eye_state, int(splitted[0]))
+                send_blink()
             except:
                 time.sleep(2.5)
