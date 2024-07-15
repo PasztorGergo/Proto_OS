@@ -61,7 +61,7 @@ def toggleRaveMode():
     global rave
     try:
         rave = request.get_json()["state"]
-        send_feature(eval(rave), 0b0)
+        send_feature(eval(rave), 0b10)
         print("Rave mode toggled")
         write_change()
         return {"state": eval(rave)}
@@ -73,7 +73,7 @@ def setPatroitism():
     global hu
     try:
         hu = request.get_json()["state"]
-        send_feature(eval(hu), 0b1)
+        send_feature(eval(hu), 0b11)
         write_change()
         print("Patroitism toggled")
         return {"state": eval(hu)}
@@ -86,7 +86,7 @@ def toggleEyeTracking():
     try:
         eye = request.get_json()["state"]
         write_change()
-        send_feature(eval(eye), 0b0)
+        send_feature(eval(eye), 0b00)
         return {"state": eval(eye)}
     except:
         return {"state": eval(eye)}, 500
@@ -96,7 +96,7 @@ def toggleMouthSynch():
     global mouth
     try:
         mouth = request.get_json()["state"]
-        send_feature(eval(mouth), 0b1)
+        send_feature(eval(mouth), 0b01)
         write_change()
         return {"state": eval(mouth)}
     except:
