@@ -1,4 +1,10 @@
 from smbus2 import SMBus
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+
+GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 TEENSY_ADDR = 0x3c
 DEVICE_BUS = 1
