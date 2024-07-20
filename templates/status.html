@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EnginEar | Proto_OS</title>
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='/styles/output.css')}}"
+    />
+    <link
+      rel="shortcut icon"
+      href="{{url_for('static', filename='assets/EnginEar_Logo.svg')}}"
+      type="image/x-icon"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="relative min-h-screen pt-16 pb-8">
+    <header
+      class="relative w-full py-4 lg:px-24 md:px-8 px-4 flex items-center justify-between"
+    >
+      <div class="flex sm:flex-row flex-col gap-4 sm:gap-8 items-center h-full">
+        <img
+          width="64"
+          height="64"
+          alt="Scan logo"
+          src="{{url_for('static', filename='assets/timer.svg')}}"
+          class="mix-blend-normal"
+        />
+        <h2 class="glow-text text-lg md:text-2xl lg:text-3xl uppercase">
+          Bio scan
+        </h2>
+      </div>
+      <div class="flex sm:flex-row flex-col items-center gap-4 sm:gap-8">
+        <h2
+          class="uppercase sm:order-1 order-2 glow-text text-lg md:text-2xl lg:text-3xl"
+        >
+          Threat level
+        </h2>
+        <div
+          class="sm:order-2 order-1 min-w-fit flex flex-col items-center gap-4"
+        >
+          <img
+            class="h-12"
+            src="{{url_for('static', filename='assets/range.svg')}}"
+            alt="Threat-o-meter"
+          />
+          <div
+            id="threat-slide"
+            class="bg-primary w-full relative flex items-center"
+          >
+            <div class="absolute bg-primary w-4 h-4" id="triangle" />
+          </div>
+        </div>
+      </div>
+      <div
+        class="absolute top-0 left-0 bg-primary-light w-full h-full mix-blend-soft-light"
+      />
+    </header>
+    <main
+      class="mt-16 lg:px-24 md:px-8 px-4 w-full grid md:grid-cols-3 grid-cols-1 md:gap-x-4 lg:gap-x-8 md:gap-y-0 gap-y-8"
+    >
+      <nav class="">
+        <h2
+          class="bg-primary-light bg-opacity-25 text-2xl glow-text w-full px-4 py-2 text-opacity-80 mb-8"
+        >
+          Scan data
+        </h2>
+        <ul class="flex flex-col w-full text-white gap-2">
+          {% if title == "controls"%}
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border bg-yellow-500 bg-opacity-80 border-primary-lighter border-opacity-25"
+          >
+            <a href="/">Control panel</a>
+          </li>
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
+          >
+            <a href="/scans">HK-ReSe-024 type Protogen</a>
+          </li>
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
+          >
+            <a href="/status">Astro's status</a>
+          </li>
+          {% elif title == "scans" %}
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
+          >
+            <a href="/">Control panel</a>
+          </li>
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border bg-yellow-500 bg-opacity-80 border-primary-lighter border-opacity-25"
+          >
+            <a href="/scans">HK-ReSe-024 type Protogen</a>
+          </li>
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
+          >
+            <a href="/status">Astro's status</a>
+          </li>
+          {% else %}
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
+          >
+            <a href="/">Control panel</a>
+          </li>
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
+          >
+            <a href="/scans">Control panel</a>
+          </li>
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border bg-yellow-500 bg-opacity-80 border-primary-lighter border-opacity-25"
+          >
+            <a href="/status">Astro's status</a>
+          </li>
+          {%endif%}
+        </ul>
+      </nav>
+      <section>
+        <h2
+          class="bg-primary-light bg-opacity-25 text-2xl glow-text w-full px-4 py-2 text-opacity-80 mb-8"
+        >
+          Emotions
+        </h2>
+        <ul
+          class="max-h-80 glow-text flex md:flex-col md:flex-nowrap flex-wrap md:items-center gap-8 w-full overflow-y-scroll"
+        >
+          <li class="emotion md:w-auto w-16" onclick="setEmotion(0)">
+            <img
+              src="{{url_for('static', filename='/assets/Default.png')}}"
+              title="Default"
+              alt="Default"
+              class="w-full h-full"
+            />
+          </li>
+          <li class="emotion md:w-auto w-16" onclick="setEmotion(1)">
+            <img
+              src="{{url_for('static', filename='/assets/Happy.png')}}"
+              title="Happy"
+              alt="Happy"
+              class="w-full h-full"
+            />
+          </li>
+          <li class="emotion md:w-auto w-16" onclick="setEmotion(2)">
+            <img
+              src="{{url_for('static', filename='/assets/Tired.png')}}"
+              title="Tired"
+              alt="Tired"
+              class="w-full h-full"
+            />
+          </li>
+          <li class="emotion md:w-auto w-16" onclick="setEmotion(3)">
+            <img
+              src="{{url_for('static', filename='/assets/Eyes-closed.png')}}"
+              title="Eyes-closed"
+              alt="Eyes-closed"
+              class="w-full h-full"
+            />
+          </li>
+          <li class="emotion md:w-auto w-16" onclick="setEmotion(4)">
+            <img
+              src="{{url_for('static', filename='/assets/Angry.png')}}"
+              title="Angry"
+              alt="Angry"
+              class="w-full h-full"
+            />
+          </li>
+          <li class="emotion md:w-auto w-16" onclick="setEmotion(5)">
+            <img
+              src="{{url_for('static', filename='/assets/Furious.png')}}"
+              title="Furious"
+              alt="Furious"
+              class="w-full h-full"
+            />
+          </li>
+          <li class="emotion md:w-auto w-16" onclick="setEmotion(6)">
+            <img
+              src="{{url_for('static', filename='/assets/Sad.png')}}"
+              title="Sad"
+              alt="Sad"
+              class="w-full h-full"
+            />
+          </li>
+          <li class="emotion md:w-auto w-16" onclick="setEmotion(7)">
+            <img
+              src="{{url_for('static', filename='/assets/Inquestitive.png')}}"
+              title="Inquestitive"
+              alt="Inquestitive"
+              class="w-full h-full"
+            />
+          </li>
+          <li class="emotion md:w-auto w-16" onclick="setEmotion(8)">
+            <img
+              src="{{url_for('static', filename='/assets/Confused.png')}}"
+              title="Confused"
+              alt="Confused"
+              class="w-full h-full"
+            />
+          </li>
+          <li class="emotion md:w-auto w-16" onclick="setEmotion(9)">
+            <img
+              src="{{url_for('static', filename='/assets/Love.png')}}"
+              title="Love"
+              alt="Love"
+              class="w-full h-full"
+            />
+          </li>
+        </ul>
+      </section>
+      <section class="flex flex-col gap-8">
+        <h2
+          class="bg-primary-light bg-opacity-25 text-2xl glow-text w-full px-4 py-2 text-opacity-80"
+        >
+          Functions
+        </h2>
+        <div>
+          <h3
+            class="px-4 py-2 md:w-2/3 bg-title bg-opacity-25 text-primary-light text-opacity-80"
+          >
+            Primary
+          </h3>
+          <ul class="text-primary-light mt-4 flex flex-col gap-4">
+            <li class="flex items-center gap-4">
+              <button
+                onclick="toggleEyeTracking()"
+                class="transition-all duration-500 rounded-full p-2 w-12 h-12 aspect-square"
+                id="eye-btn"
+              ></button>
+              Eye tracking
+            </li>
+            <li class="flex items-center gap-4">
+              <button
+                onclick="toggleMouthTracking()"
+                class="transition-all duration-500 rounded-full p-2 w-12 h-12 aspect-square"
+                id="mouth-btn"
+              ></button>
+              Lip synchronization
+            </li>
+            <li id="os"></li>
+            <li>
+              <input
+                id="fan"
+                type="range"
+                max="100"
+                min="0"
+                step="10"
+                value="0"
+              />
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3
+            class="px-4 py-2 md:w-2/3 bg-title bg-opacity-25 text-primary-light text-opacity-80"
+          >
+            Secondary
+          </h3>
+          <ul class="text-primary-light mt-4 flex flex-col gap-4">
+            <li class="flex items-center gap-4">
+              <button
+                onclick="toggleRaveMode()"
+                class="transition-all duration-500 rounded-full p-2 w-12 h-12 aspect-square"
+                id="rave-btn"
+              ></button>
+              Rave mode
+            </li>
+            <li class="flex items-center gap-4">
+              <button
+                onclick="togglePatroitismMode()"
+                class="transition-all duration-500 rounded-full p-2 w-12 h-12 aspect-square"
+                id="hungary"
+              >
+                ON
+              </button>
+              Patriotism mode
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+    <footer class="grid place-items-center pt-4">
+      <p class="text-primary-lighter">2024 ©️</p>
+    </footer>
+    <script></script>
+  </body>
+</html>

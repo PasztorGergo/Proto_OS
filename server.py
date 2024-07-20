@@ -1,6 +1,6 @@
 from flask import Flask, request,render_template
-from fan_control import set_fan_speed
-from i2c_comm import send_emotion, send_blink, send_feature
+#from fan_control import set_fan_speed
+#from i2c_comm import send_emotion, send_blink, send_feature
 
 app = Flask(__name__)
 emotion = 0
@@ -37,6 +37,9 @@ def index():
 def scan_data():
     return render_template("scans.html", title="scans")
 
+@app.route("/status")
+def status_data():
+    return render_template("status.html", title="status")
 
 @app.route("/static-emotion", methods=["POST"])
 def setEmtoion():
@@ -44,7 +47,7 @@ def setEmtoion():
     if int(request.get_json()["id"]) != 8:
         try:
             id = int(request.get_json()["id"])
-            send_emotion(id)
+            #send_emotion(id)
             rave = False
             write_change()
             return {"id": id}
@@ -61,7 +64,7 @@ def toggleRaveMode():
     global rave
     try:
         rave = request.get_json()["state"]
-        send_feature(eval(rave), 0b10)
+        #send_feature(eval(rave), 0b10)
         print("Rave mode toggled")
         write_change()
         return {"state": eval(rave)}
@@ -73,7 +76,7 @@ def setPatroitism():
     global hu
     try:
         hu = request.get_json()["state"]
-        send_feature(eval(hu), 0b11)
+        #send_feature(eval(hu), 0b11)
         write_change()
         print("Patroitism toggled")
         return {"state": eval(hu)}
@@ -86,7 +89,7 @@ def toggleEyeTracking():
     try:
         eye = request.get_json()["state"]
         write_change()
-        send_feature(eval(eye), 0b00)
+        #send_feature(eval(eye), 0b00)
         return {"state": eval(eye)}
     except:
         return {"state": eval(eye)}, 500
@@ -96,7 +99,7 @@ def toggleMouthSynch():
     global mouth
     try:
         mouth = request.get_json()["state"]
-        send_feature(eval(mouth), 0b01)
+        #send_feature(eval(mouth), 0b01)
         write_change()
         return {"state": eval(mouth)}
     except:
@@ -107,7 +110,7 @@ def setFanSpeed():
     global speed
     try:
         speed = int(request.get_json()["speed"])
-        set_fan_speed(speed)
+        #set_fan_speed(speed)
         return {"speed": speed}
     except:
         return {"speed": speed}, 500

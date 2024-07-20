@@ -76,25 +76,51 @@
         <ul class="flex flex-col w-full text-white gap-2">
           {% if title == "controls"%}
           <li
-            class="pl-8 pr-4 py-2 rounded-sm border bg-yellow-500 bg-opacity-80 border-primary-lighter border-opacity-25"
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border bg-yellow-500 bg-opacity-80 border-primary-lighter border-opacity-25"
           >
             <a href="/">Control panel</a>
           </li>
           <li
-            class="pl-8 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
           >
             <a href="/scans">HK-ReSe-024 type Protogen</a>
+          </li>
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
+          >
+            <a href="/status">Astro's status</a>
           </li>
           {% elif title == "scans" %}
           <li
-            class="pl-8 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
           >
             <a href="/">Control panel</a>
           </li>
           <li
-            class="pl-8 pr-4 py-2 rounded-sm border bg-yellow-500 bg-opacity-80 border-primary-lighter border-opacity-25"
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border bg-yellow-500 bg-opacity-80 border-primary-lighter border-opacity-25"
           >
             <a href="/scans">HK-ReSe-024 type Protogen</a>
+          </li>
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
+          >
+            <a href="/status">Astro's status</a>
+          </li>
+          {% else %}
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
+          >
+            <a href="/">Control panel</a>
+          </li>
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border border-primary-lighter border-opacity-25"
+          >
+            <a href="/scans">Control panel</a>
+          </li>
+          <li
+            class="md:pl-8 pl-4 pr-4 py-2 rounded-sm border bg-yellow-500 bg-opacity-80 border-primary-lighter border-opacity-25"
+          >
+            <a href="/status">Astro's status</a>
           </li>
           {%endif%}
           <li>
