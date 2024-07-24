@@ -1,14 +1,18 @@
 from bluedot.btcomm import BluetoothServer
 from signal import pause
 
-#ENGINEAR_MAC = "2C:CF:67:1B:D9:91" 
-
 def on_receive(astro_db):
     enginear_db = None
     with open("db.txt") as fp:
         enginear_db = fp.readline()
-    with open("db.txt", "w") as fp:
-        fp.write(f"{enginear_db}\n{astro_db}")
+    if astro_db == "req":
+        server.send(enginear_db)
+    else:
+        with open("db.txt", "w") as fp:
+            fp.write(f"{enginear_db}\n{astro_db}")
+
+def req_to_astro():
+    client.send("req")
 
 def astro_connected():
     print("Astro connected UwU")
@@ -19,12 +23,17 @@ def astro_connected():
     server.send(f"{enginear_db}\tcon")
 
 def astro_disconnected():
-    print("Farewell, brother!")
+    print("Farewell, bro!")
     enginear_db = None
     with open("db.txt") as fp:
         enginear_db = fp.readline().replace("\n", "")
     with open("db.txt", "w") as fp:
         fp.write(f"{enginear_db}\n-1")
+
+def update_to_astro():
+    with open("db.txt") as fp:
+        enginear_db = fp.readline().replace("\n", "")
+        server.send(enginear_db)
 
 server = BluetoothServer(on_receive, when_client_connects=astro_connected, when_client_disconnects=astro_disconnected)
 

@@ -1,6 +1,7 @@
 from flask import Flask, request,render_template
-#from fan_control import set_fan_speed
-#from i2c_comm import send_emotion, send_blink, send_feature
+from fan_control import set_fan_speed
+from i2c_comm import send_emotion, send_blink, send_feature
+from bluetooth_functions import req_to_astro, update_to_astro
 
 app = Flask(__name__)
 emotion = 0
@@ -39,6 +40,7 @@ def scan_data():
 
 @app.route("/status")
 def status_data():
+    req_to_astro()
     return render_template("status.html", title="status")
 
 @app.route("/static-emotion", methods=["POST"])
@@ -47,9 +49,10 @@ def setEmtoion():
     if int(request.get_json()["id"]) != 8:
         try:
             id = int(request.get_json()["id"])
-            #send_emotion(id)
+            send_emotion(id)
             rave = False
             write_change()
+            update_to_astro()
             return {"id": id}
         except:
             return {"id": id}, 500
@@ -64,9 +67,10 @@ def toggleRaveMode():
     global rave
     try:
         rave = request.get_json()["state"]
-        #send_feature(eval(rave), 0b10)
+        send_feature(eval(rave), 0b10)
         print("Rave mode toggled")
         write_change()
+        update_to_astro()
         return {"state": eval(rave)}
     except:
         return {"state": eval(rave)}, 500
@@ -76,8 +80,9 @@ def setPatroitism():
     global hu
     try:
         hu = request.get_json()["state"]
-        #send_feature(eval(hu), 0b11)
+        send_feature(eval(hu), 0b11)
         write_change()
+        update_to_astro()
         print("Patroitism toggled")
         return {"state": eval(hu)}
     except:
@@ -88,8 +93,9 @@ def toggleEyeTracking():
     global eye
     try:
         eye = request.get_json()["state"]
+        send_feature(eval(eye), 0b00)
         write_change()
-        #send_feature(eval(eye), 0b00)
+        update_to_astro()
         return {"state": eval(eye)}
     except:
         return {"state": eval(eye)}, 500
@@ -99,8 +105,9 @@ def toggleMouthSynch():
     global mouth
     try:
         mouth = request.get_json()["state"]
-        #send_feature(eval(mouth), 0b01)
+        send_feature(eval(mouth), 0b01)
         write_change()
+        update_to_astro()
         return {"state": eval(mouth)}
     except:
         return {"state": eval(mouth)}, 500
@@ -110,7 +117,8 @@ def setFanSpeed():
     global speed
     try:
         speed = int(request.get_json()["speed"])
-        #set_fan_speed(speed)
+        set_fan_speed(speed)
+        update_to_astro()
         return {"speed": speed}
     except:
         return {"speed": speed}, 500
