@@ -229,7 +229,6 @@
           <ul class="text-primary-light mt-4 flex flex-col gap-4">
             <li class="flex items-center gap-4">
               <button
-                onclick="toggleEyeTracking()"
                 class="transition-all duration-500 rounded-full p-2 w-12 h-12 aspect-square"
                 id="eye-btn"
               ></button>
@@ -237,7 +236,6 @@
             </li>
             <li class="flex items-center gap-4">
               <button
-                onclick="toggleMouthTracking()"
                 class="transition-all duration-500 rounded-full p-2 w-12 h-12 aspect-square"
                 id="mouth-btn"
               ></button>
@@ -265,7 +263,6 @@
           <ul class="text-primary-light mt-4 flex flex-col gap-4">
             <li class="flex items-center gap-4">
               <button
-                onclick="toggleRaveMode()"
                 class="transition-all duration-500 rounded-full p-2 w-12 h-12 aspect-square"
                 id="rave-btn"
               ></button>
@@ -273,7 +270,6 @@
             </li>
             <li class="flex items-center gap-4">
               <button
-                onclick="togglePatroitismMode()"
                 class="transition-all duration-500 rounded-full p-2 w-12 h-12 aspect-square"
                 id="hungary"
               >
@@ -288,6 +284,40 @@
     <footer class="grid place-items-center pt-4">
       <p class="text-primary-lighter">2024 ©️</p>
     </footer>
-    <script></script>
+    <script>
+      const raveState = {{ rave_mode | tojson }};
+      const patriotismState = {{ patriotism | tojson }};
+      const trackEye = {{ eye | tojson}};
+      const mouthSynch = {{ mouth | tojson}};
+      const id = {{ emotion | tojson}};
+
+      const raveBtn = document.getElementById("rave-btn");
+      const hungary = document.getElementById("hungary");
+      const eyeBtn = document.getElementById("eye-btn");
+      const mouthBtn = document.getElementById("mouth-btn");
+
+      if(raveBtn && hungary && eyeBtn && mouthBtn){
+        raveBtn.classList.add(raveState ? "on" : "off")
+        hungary.classList.add(patriotismState ? "huon" : "huoff")
+        eyeBtn.classList.add(trackEye ? "on" : "off")
+        mouthBtn.classList.add(mouthSynch ? "on" : "off")
+
+        raveBtn.innerHTML = raveState ? "ON" : "OFF"
+        hungary.innerHTML = patriotismState ? "ON" : "OFF"
+        eyeBtn.innerHTML = trackEye ? "ON" : "OFF"
+        mouthBtn.innerHTML = mouthSynch ? "ON" : "OFF"
+      }
+
+      const emotions = document.querySelectorAll<HTMLLIElement>("li.emotion");
+      if(emotions.length > 0){
+        let i = 0;
+        emotions.forEach((emo)=>{
+          if(i == id)
+            emo.style.display = "inline-block"
+          else
+            emo.style.display = "none"
+        })
+      }
+    </script>
   </body>
 </html>

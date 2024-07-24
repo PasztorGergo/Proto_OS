@@ -18,9 +18,10 @@ def write_change():
     global hu
     global eye
     global mouth
+    global speed
 
     with open("db.txt", "w") as fp:
-        fp.write(f"{emotion}\t{rave}\t{hu}\t{eye}\t{mouth}\t{speed}")
+        fp.write(f"{emotion}\t{rave}\t{hu}\t{eye}\t{mouth}\t{speed}\n-1")
 
 @app.route("/")
 def index():
@@ -41,7 +42,21 @@ def scan_data():
 @app.route("/status")
 def status_data():
     req_to_astro()
-    return render_template("status.html", title="status")
+    astro_db = None
+    
+    with open("db.txt") as fp:
+        fp.readline()
+        astro_db = fp.readline().replace("\n", "").split("\t")
+
+
+    return render_template("status.html",
+    title="status",
+    emotion=int(astro_db[0]),
+    rave_mode=eval(astro_db[1]),
+    patriotism=eval(astro_db[2]),
+    eye=eval(astro_db[3]),
+    mouth=eval(astro_db[4])
+    )
 
 @app.route("/static-emotion", methods=["POST"])
 def setEmtoion():
@@ -129,4 +144,11 @@ if __name__ == "__main__":
         app.run(host="0.0.0.0", port=3000, debug=True)
     except:
         with open("db.txt", "w") as fp:
-            fp.write(default_db_values)
+            astro_db = None
+            with open("db.txt") as fp:
+                fp.readline()
+                second_line = fp.readline().replace("\n", "")
+                astro_db = "-1" if len(first_line) == 0 else first_line
+
+            with open("db.txt", "w") as fp:
+                fp.write(f"{emotion}\t{rave}\t{hu}\t{eye}\t{mouth}\t{speed}\n{astro_db}")
