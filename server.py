@@ -2,6 +2,7 @@ from flask import Flask, request,render_template
 from fan_control import set_fan_speed
 from i2c_comm import send_emotion, send_blink, send_feature
 from bluetooth_functions import req_to_astro, update_to_astro
+import time
 
 app = Flask(__name__)
 emotion = 0
@@ -11,6 +12,7 @@ eye = False
 mouth = False
 speed = 0
 default_db_values = f"{emotion}\t{rave}\t{hu}\t{eye}\t{mouth}\{speed}"
+failed_bluetooth = 0
 
 def write_change():
     global emotion
@@ -41,22 +43,28 @@ def scan_data():
 
 @app.route("/status")
 def status_data():
-    req_to_astro()
-    astro_db = None
-    
-    with open("db.txt") as fp:
-        fp.readline()
-        astro_db = fp.readline().replace("\n", "").split("\t")
+    if failed_bluetooth < 3:
+        try:
+            req_to_astro()
+            astro_db = None
 
+            with open("db.txt") as fp:
+                fp.readline()
+                astro_db = fp.readline().replace("\n", "").split("\t")
+                
+            return render_template("status.html",
+            title="status",
+            emotion=int(astro_db[0]),
+            rave_mode=eval(astro_db[1]),
+            patriotism=eval(astro_db[2]),
+            eye=eval(astro_db[3]),
+            mouth=eval(astro_db[4])
+            )
+        except:
+            failed_bluetooth += 1
+            time.sleep(5)
+            status_data()
 
-    return render_template("status.html",
-    title="status",
-    emotion=int(astro_db[0]),
-    rave_mode=eval(astro_db[1]),
-    patriotism=eval(astro_db[2]),
-    eye=eval(astro_db[3]),
-    mouth=eval(astro_db[4])
-    )
 
 @app.route("/static-emotion", methods=["POST"])
 def setEmtoion():
